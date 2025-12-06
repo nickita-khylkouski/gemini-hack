@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plant Tracker</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+            min-height: 100vh;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        
+        /* Day Navigation */
+        .day-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background: linear-gradient(135deg, #2e7d32 0%, #388e3c 100%);
+            border-radius: 12px;
+            margin-bottom: 25px;
+            color: white;
+        }
+        .day-nav button {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background 0.2s;
+        }
+        .day-nav button:hover { background: rgba(255,255,255,0.3); }
+        .day-nav button:disabled { opacity: 0.5; cursor: not-allowed; }
+        .current-day {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        
+        /* Page Sections */
+        .page { display: none; }
+        .page.active { display: block; }
+        
+        h1 { text-align: center; color: #2e7d32; margin-bottom: 25px; }
+        h2 { color: #2e7d32; border-bottom: 2px solid #c8e6c9; padding-bottom: 10px; }
+        
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; font-weight: 600; color: #37474f; }
+        input[type="text"], textarea {
+            width: 100%; padding: 12px; border: 2px solid #e0e0e0;
+            border-radius: 8px; font-size: 16px; transition: border-color 0.2s;
+        }
+        input:focus, textarea:focus { border-color: #2e7d32; outline: none; }
+        
+        button {
+            width: 100%; padding: 14px; border: none; border-radius: 8px;
+            cursor: pointer; font-size: 16px; font-weight: 600;
+            margin-bottom: 10px; color: white; transition: transform 0.1s, opacity 0.2s;
+        }
+        button:active { transform: scale(0.98); }
+        button:disabled { opacity: 0.6; cursor: not-allowed; }
+        
+        .btn-primary { background: linear-gradient(135deg, #2e7d32 0%, #388e3c 100%); }
+        .btn-search { background: linear-gradient(135deg, #7b1fa2 0%, #9c27b0 100%); }
+        .btn-weather { background: linear-gradient(135deg, #1565c0 0%, #1976d2 100%); }
+        .btn-color { background: linear-gradient(135deg, #00796b 0%, #009688 100%); }
+        .btn-leaf { background: linear-gradient(135deg, #2e7d32 0%, #43a047 100%); }
+        .btn-infection { background: linear-gradient(135deg, #e65100 0%, #f57c00 100%); }
+        .btn-growth { background: linear-gradient(135deg, #6a1b9a 0%, #8e24aa 100%); }
+        .btn-danger { background: linear-gradient(135deg, #c62828 0%, #e53935 100%); }
+        
+        .row { display: flex; gap: 15px; }
+        .col { flex: 1; }
+        
+        /* Image Drop Zone */
+        .drop-zone {
+            width: 100%; min-height: 200px; padding: 25px;
+            display: flex; align-items: center; justify-content: center;
+            border: 3px dashed #c8e6c9; border-radius: 12px;
+            cursor: pointer; background: #f1f8e9;
+            position: relative; transition: all 0.2s;
+        }
+        .drop-zone:hover { border-color: #2e7d32; background: #e8f5e9; }
+        .drop-zone--over { border-color: #2e7d32; background: #c8e6c9; }
+        .drop-zone__input { display: none; }
+        .drop-zone__thumb {
+            width: 100%; border-radius: 10px;
+            max-height: 300px; object-fit: contain;
+        }
+        .drop-zone__text { color: #689f38; font-weight: 500; }
+        
+        /* Image Comparison */
+        .images-section { margin-bottom: 20px; }
+        .image-compare {
+            position: relative; width: 100%; height: 450px;
+            background: #1a1a1a; border-radius: 12px; overflow: hidden;
+        }
+        .image-compare img {
+            position: absolute; top: 0; left: 0;
+            width: 100%; height: 100%; object-fit: contain;
+        }
+        .image-compare .predicted-img { z-index: 1; }
+        .image-compare .real-img { z-index: 2; }
+        .slider-container {
+            margin-top: 15px; padding: 15px; background: #f5f5f5;
+            border-radius: 12px; text-align: center;
+        }
+        .slider-labels { display: flex; justify-content: space-between; margin-bottom: 10px; font-weight: 600; }
+        .slider-labels .real { color: #2e7d32; }
+        .slider-labels .predicted { color: #7b1fa2; }
+        .compare-slider {
+            width: 100%; height: 8px; appearance: none;
+            background: linear-gradient(to right, #2e7d32, #9c27b0);
+            border-radius: 4px; cursor: pointer;
+        }
+        .compare-slider::-webkit-slider-thumb {
+            appearance: none; width: 24px; height: 24px;
+            background: white; border-radius: 50%;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.3); cursor: pointer;
+        }
+        .percent-display {
+            font-size: 32px; font-weight: bold; margin: 15px 0;
+            background: linear-gradient(to right, #2e7d32, #9c27b0);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .upload-row { display: flex; gap: 10px; margin-top: 15px; }
+        .upload-row > * { flex: 1; }
+        .no-image { color: #bdbdbd; padding: 150px 20px; text-align: center; font-style: italic; }
+        
+        /* Results */
+        .result-box {
+            margin-top: 15px; padding: 15px; border-radius: 10px;
+            display: none; line-height: 1.6;
+        }
+        #aboutResult { background: #f3e5f5; border-left: 4px solid #9c27b0; }
+        #weatherResult { background: #e3f2fd; border-left: 4px solid #1976d2; }
+        #colorResult { background: #e0f2f1; border-left: 4px solid #009688; }
+        #leafResult { background: #e8f5e9; border-left: 4px solid #43a047; }
+        #infectionResult { background: #fff3e0; border-left: 4px solid #f57c00; }
+        #growthResult { background: #f3e5f5; border-left: 4px solid #8e24aa; }
+        
+        .result-title { margin: 0 0 10px 0; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; }
+        .color-display { display: flex; align-items: center; gap: 15px; }
+        .color-square { width: 50px; height: 50px; border-radius: 8px; border: 2px solid #333; }
+        .color-hex { font-size: 22px; font-weight: bold; font-family: monospace; }
+        .leaf-count { font-size: 32px; font-weight: bold; color: #2e7d32; }
+        .growth-stage { font-size: 24px; font-weight: bold; color: #8e24aa; }
+        
+        #status {
+            margin-top: 15px; padding: 12px; border-radius: 8px;
+            text-align: center; display: none; font-weight: 500;
+        }
+        .success { background: #c8e6c9; color: #2e7d32; }
+        .error { background: #ffcdd2; color: #c62828; }
+        
+        .info-display { background: #f5f5f5; padding: 15px; border-radius: 8px; margin-bottom: 15px; }
+        .info-label { font-size: 12px; color: #757575; text-transform: uppercase; }
+        .info-value { font-size: 18px; font-weight: 600; color: #37474f; }
+        
+        .button-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
+        .button-grid button { margin-bottom: 0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Day Navigation -->
+        <div class="day-nav">
+            <button id="prevDay">← Previous</button>
+            <span class="current-day" id="dayLabel">Plant Info</span>
+            <button id="nextDay">Next →</button>
+        </div>
+        
+        <!-- Page: Plant Setup (Day -1) -->
+        <div class="page" id="page-setup">
+            <h1>🌱 Plant Setup</h1>
+            <form id="setupForm">
+                <div class="form-group">
+                    <label>Plant Name</label>
+                    <input type="text" id="plantName" required placeholder="e.g., Chili Pepper">
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <div class="form-group">
+                            <label>City</label>
+                            <input type="text" id="city" required placeholder="e.g., San Francisco">
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="form-group">
+                            <label>Indoor Location</label>
+                            <input type="text" id="indoorLocation" required placeholder="e.g., Living Room Window">
+                        </div>
+                    </div>
+                </div>
+                <button type="submit" class="btn-primary">Save Plant Info</button>
+                <button type="button" id="searchAboutBtn" class="btn-search" style="display:none;">🔍 Search About Plant</button>
+            </form>
+            
+            <div class="result-box" id="aboutResult">
+                <h4 class="result-title" style="color:#7b1fa2;">Plant Information</h4>
+                <div id="aboutText"></div>
+            </div>
+        </div>
+        
+        <!-- Page: Daily Tracking (Day 0+) -->
+        <div class="page" id="page-daily">
+            <h1>📅 Daily Tracking</h1>
+            
+            <div class="info-display">
+                <div class="row">
+                    <div class="col">
+                        <div class="info-label">Plant</div>
+                        <div class="info-value" id="displayName">-</div>
+                    </div>
+                    <div class="col">
+                        <div class="info-label">Location</div>
+                        <div class="info-value" id="displayLocation">-</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Image Comparison Section -->
+            <div class="images-section">
+                <label>Plant Growth Comparison</label>
+                <div class="image-compare" id="imageCompare">
+                    <img id="predictedImg" class="predicted-img" src="" alt="Predicted" style="display:none;">
+                    <img id="realImg" class="real-img" src="" alt="Real" style="display:none;">
+                    <div id="noImageMsg" class="no-image">Upload an image to see comparison</div>
+                </div>
+                
+                <div class="slider-container" id="sliderContainer" style="display:none;">
+                    <div class="slider-labels">
+                        <span class="real">📷 Real (Today)</span>
+                        <span class="predicted">🔮 Predicted (Tomorrow)</span>
+                    </div>
+                    <input type="range" class="compare-slider" id="compareSlider" min="0" max="100" value="0">
+                    <div class="percent-display" id="percentDisplay">0% → 100%</div>
+                </div>
+                
+                <div class="upload-row">
+                    <div class="drop-zone" id="dropZone" style="min-height:80px;">
+                        <span class="drop-zone__text">📷 Upload Real Image</span>
+                        <input type="file" id="plantImage" class="drop-zone__input" accept="image/*">
+                    </div>
+                    <button type="button" id="predictBtn" class="btn-search" style="margin:0;">🔮 Generate Prediction</button>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>Daily Notes / Feedback</label>
+                <textarea id="feedback" rows="3" placeholder="How does the plant look today?"></textarea>
+            </div>
+            
+            <button id="saveDayBtn" class="btn-primary">💾 Save Day Info</button>
+            
+            <div class="button-grid">
+                <button id="weatherBtn" class="btn-weather">☁️ Weather</button>
+                <button id="colorBtn" class="btn-color">🎨 Color</button>
+                <button id="leafBtn" class="btn-leaf">🍃 Leaves</button>
+                <button id="infectionBtn" class="btn-infection">🔬 Health</button>
+                <button id="growthBtn" class="btn-growth">🌱 Growth Stage</button>
+                <button id="identifyBtn" style="background: linear-gradient(135deg, #00695c 0%, #00897b 100%);">🔎 Identify Plant</button>
+            </div>
+            
+            <div class="result-box" id="weatherResult">
+                <h4 class="result-title" style="color:#1565c0;">Weather</h4>
+                <div id="weatherText"></div>
+            </div>
+            <div class="result-box" id="colorResult">
+                <h4 class="result-title" style="color:#00796b;">Plant Color</h4>
+                <div id="colorDisplay"></div>
+            </div>
+            <div class="result-box" id="leafResult">
+                <h4 class="result-title" style="color:#2e7d32;">Leaf Count</h4>
+                <div id="leafDisplay"></div>
+            </div>
+            <div class="result-box" id="infectionResult">
+                <h4 class="result-title" style="color:#e65100;">Health Check</h4>
+                <div id="infectionText"></div>
+            </div>
+            <div class="result-box" id="growthResult">
+                <h4 class="result-title" style="color:#6a1b9a;">Growth Stage</h4>
+                <div id="growthDisplay"></div>
+            </div>
+        </div>
+        
+        <button id="clearBtn" class="btn-danger" style="margin-top: 20px;">🗑️ Clear All Data</button>
+        <div id="status"></div>
+    </div>
+
+    <script>
+        // State
+        let currentDay = -1;
+        let plantData = null;
+        let currentFile = null;
+        
+        // Elements
+        const dayLabel = document.getElementById('dayLabel');
+        const prevBtn = document.getElementById('prevDay');
+        const nextBtn = document.getElementById('nextDay');
+        const pageSetup = document.getElementById('page-setup');
+        const pageDaily = document.getElementById('page-daily');
+        
+        // Initialize
+        loadPlantData();
+        
+        async function loadPlantData() {
+            const res = await fetch('/api/plant');
+            const data = await res.json();
+            plantData = data.plant;
+            
+            if (plantData) {
+                currentDay = plantData.currentDay || 0;
+                fillSetupForm();
+                updateDisplay();
+            } else {
+                currentDay = -1;
+                updateDisplay();
+            }
+        }
+        
+        function fillSetupForm() {
+            if (!plantData) return;
+            document.getElementById('plantName').value = plantData.name || '';
+            document.getElementById('city').value = plantData.city || '';
+            document.getElementById('indoorLocation').value = plantData.indoorLocation || '';
+            
+            if (plantData.about) {
+                document.getElementById('aboutText').innerHTML = plantData.about;
+                document.getElementById('aboutResult').style.display = 'block';
+            }
+            document.getElementById('searchAboutBtn').style.display = 'block';
+        }
+        
+        function updateDisplay() {
+            // Update day label
+            if (currentDay === -1) {
+                dayLabel.textContent = 'Plant Info';
+                pageSetup.classList.add('active');
+                pageDaily.classList.remove('active');
+            } else {
+                dayLabel.textContent = `Day ${currentDay}`;
+                pageSetup.classList.remove('active');
+                pageDaily.classList.add('active');
+                loadDayData(currentDay);
+            }
+            
+            prevBtn.disabled = currentDay <= -1;
+            nextBtn.disabled = currentDay >= 45;
+            
+            if (plantData) {
+                document.getElementById('displayName').textContent = plantData.name || '-';
+                document.getElementById('displayLocation').textContent = `${plantData.indoorLocation}, ${plantData.city}` || '-';
+            }
+        }
+        
+        function loadDayData(day) {
+            if (!plantData || !plantData.days) return;
+            
+            const dayKey = `day${day}`;
+            const dayData = plantData.days[dayKey] || {};
+            
+            // Clear previous
+            hideAllResults();
+            const thumb = document.querySelector('.drop-zone__thumb');
+            if (thumb) thumb.remove();
+            document.querySelector('.drop-zone__text').style.display = 'block';
+            currentFile = null;
+            
+            document.getElementById('feedback').value = dayData.feedback || '';
+            
+            // Image comparison overlay
+            const realImg = document.getElementById('realImg');
+            const predictedImg = document.getElementById('predictedImg');
+            const noImageMsg = document.getElementById('noImageMsg');
+            const sliderContainer = document.getElementById('sliderContainer');
+            const compareSlider = document.getElementById('compareSlider');
+            
+            // Get predicted image (either from this day or previous)
+            const predictedSrc = dayData.predictedImage || dayData.predictedFromPrevious;
+            
+            if (dayData.image && predictedSrc) {
+                // Both images - show comparison
+                realImg.src = dayData.image;
+                predictedImg.src = predictedSrc;
+                realImg.style.display = 'block';
+                predictedImg.style.display = 'block';
+                noImageMsg.style.display = 'none';
+                sliderContainer.style.display = 'block';
+                compareSlider.value = 0;
+                updateSlider(0);
+            } else if (dayData.image) {
+                // Only real image
+                realImg.src = dayData.image;
+                realImg.style.display = 'block';
+                realImg.style.opacity = 1;
+                predictedImg.style.display = 'none';
+                noImageMsg.style.display = 'none';
+                sliderContainer.style.display = 'none';
+            } else {
+                // No images
+                realImg.style.display = 'none';
+                predictedImg.style.display = 'none';
+                noImageMsg.style.display = 'block';
+                sliderContainer.style.display = 'none';
+            }
+            if (dayData.weather) {
+                document.getElementById('weatherText').textContent = dayData.weather;
+                document.getElementById('weatherResult').style.display = 'block';
+            }
+            if (dayData.plantColor) {
+                document.getElementById('colorDisplay').innerHTML = `<div class="color-display"><div class="color-square" style="background:${dayData.plantColor}"></div><span class="color-hex">${dayData.plantColor}</span></div>`;
+                document.getElementById('colorResult').style.display = 'block';
+            }
+            if (dayData.leafCount) {
+                document.getElementById('leafDisplay').innerHTML = `<span class="leaf-count">${dayData.leafCount}</span> leaves`;
+                document.getElementById('leafResult').style.display = 'block';
+            }
+            if (dayData.infections) {
+                const isHealthy = dayData.infections.toLowerCase().includes('healthy');
+                document.getElementById('infectionText').innerHTML = `<span style="color:${isHealthy ? '#2e7d32' : '#c62828'}">${dayData.infections}</span>`;
+                document.getElementById('infectionResult').style.display = 'block';
+            }
+            if (dayData.growthStage) {
+                document.getElementById('growthDisplay').innerHTML = `<span class="growth-stage">${dayData.growthStage}</span>`;
+                document.getElementById('growthResult').style.display = 'block';
+            }
+        }
+        
+        function hideAllResults() {
+            ['weatherResult', 'colorResult', 'leafResult', 'infectionResult', 'growthResult'].forEach(id => {
+                document.getElementById(id).style.display = 'none';
+            });
+        }
+        
+        function showThumbnail(src) {
+            const dropZone = document.getElementById('dropZone');
+            document.querySelector('.drop-zone__text').style.display = 'none';
+            let thumb = dropZone.querySelector('.drop-zone__thumb');
+            if (!thumb) {
+                thumb = document.createElement('div');
+                thumb.classList.add('drop-zone__thumb');
+                dropZone.appendChild(thumb);
+            }
+            thumb.style.backgroundImage = `url('${src}')`;
+        }
+        
+        // Navigation
+        prevBtn.addEventListener('click', () => { currentDay--; updateDisplay(); });
+        nextBtn.addEventListener('click', () => { currentDay++; updateDisplay(); });
+        
+        // Setup Form
+        document.getElementById('setupForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = e.target.querySelector('button[type="submit"]');
+            btn.disabled = true;
+            btn.textContent = 'Saving...';
+            
+            try {
+                const res = await fetch('/api/plant', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        name: document.getElementById('plantName').value,
+                        city: document.getElementById('city').value,
+                        indoorLocation: document.getElementById('indoorLocation').value,
+                        dayOfPlanting: 'Day 0',
+                        feedback: '',
+                        image: null
+                    })
+                });
+                const result = await res.json();
+                if (result.success) {
+                    showStatus('Plant info saved!', 'success');
+                    document.getElementById('searchAboutBtn').style.display = 'block';
+                    await loadPlantData();
+                }
+            } catch (err) {
+                showStatus('Error: ' + err.message, 'error');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Save Plant Info';
+            }
+        });
+        
+        // Search About
+        document.getElementById('searchAboutBtn').addEventListener('click', async () => {
+            const btn = document.getElementById('searchAboutBtn');
+            btn.disabled = true;
+            btn.textContent = 'Searching...';
+            
+            try {
+                const res = await fetch('/api/plant/enhance', { method: 'POST' });
+                const result = await res.json();
+                if (result.error) throw new Error(result.error);
+                
+                document.getElementById('aboutText').innerHTML = result.about;
+                document.getElementById('aboutResult').style.display = 'block';
+                showStatus('Plant info fetched!', 'success');
+                await loadPlantData();
+            } catch (err) {
+                showStatus('Error: ' + err.message, 'error');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '🔍 Search About Plant';
+            }
+        });
+        
+        // Drop Zone - handles both click and drag-drop
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('plantImage');
+        
+        // Click to open file picker
+        dropZone.addEventListener('click', () => fileInput.click());
+        
+        // File selected via picker
+        fileInput.addEventListener('change', () => handleFile(fileInput.files[0]));
+        
+        // Drag and drop events
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            dropZone.classList.add('drop-zone--over');
+        });
+        
+        dropZone.addEventListener('dragleave', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            dropZone.classList.remove('drop-zone--over');
+        });
+        
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            dropZone.classList.remove('drop-zone--over');
+            
+            const files = e.dataTransfer.files;
+            if (files && files.length > 0) {
+                handleFile(files[0]);
+            }
+        });
+        
+        // Handle file upload - show preview AND auto-save
+        async function handleFile(file) {
+            if (!file || !file.type.startsWith('image/')) {
+                showStatus('Please select an image file', 'error');
+                return;
+            }
+            
+            currentFile = file;
+            
+            // Show loading
+            const dropText = document.querySelector('.drop-zone__text');
+            dropText.textContent = '⏳ Uploading...';
+            
+            // Read file as base64
+            const imageData = await new Promise(resolve => {
+                const reader = new FileReader();
+                reader.onload = (e) => resolve(e.target.result);
+                reader.readAsDataURL(file);
+            });
+            
+            // Update preview in comparison view
+            const realImg = document.getElementById('realImg');
+            realImg.src = imageData;
+            realImg.style.display = 'block';
+            realImg.style.opacity = 1;
+            document.getElementById('noImageMsg').style.display = 'none';
+            
+            // Update drop zone text
+            dropText.textContent = '✅ ' + file.name;
+            dropText.style.display = 'block';
+            
+            // Auto-save the image immediately
+            try {
+                const res = await fetch('/api/plant', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        name: plantData.name,
+                        city: plantData.city,
+                        indoorLocation: plantData.indoorLocation,
+                        dayOfPlanting: `Day ${currentDay}`,
+                        feedback: document.getElementById('feedback').value,
+                        image: imageData
+                    })
+                });
+                const result = await res.json();
+                if (result.success) {
+                    showStatus('Image uploaded & saved!', 'success');
+                    await loadPlantData();
+                } else {
+                    throw new Error('Failed to save');
+                }
+            } catch (err) {
+                showStatus('Error saving image: ' + err.message, 'error');
+                dropText.textContent = '📷 Upload Real Image';
+            }
+        }
+        
+        // Save Day
+        document.getElementById('saveDayBtn').addEventListener('click', async () => {
+            const btn = document.getElementById('saveDayBtn');
+            btn.disabled = true;
+            btn.textContent = 'Saving...';
+            
+            try {
+                let imageData = null;
+                if (currentFile) {
+                    imageData = await new Promise(r => {
+                        const reader = new FileReader();
+                        reader.onload = e => r(e.target.result);
+                        reader.readAsDataURL(currentFile);
+                    });
+                }
+                
+                const res = await fetch('/api/plant', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        name: plantData.name,
+                        city: plantData.city,
+                        indoorLocation: plantData.indoorLocation,
+                        dayOfPlanting: `Day ${currentDay}`,
+                        feedback: document.getElementById('feedback').value,
+                        image: imageData
+                    })
+                });
+                const result = await res.json();
+                if (result.success) {
+                    showStatus('Day saved!', 'success');
+                    await loadPlantData();
+                }
+            } catch (err) {
+                showStatus('Error: ' + err.message, 'error');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '💾 Save Day Info';
+            }
+        });
+        
+        // Analysis Buttons
+        async function callAPI(endpoint, btnId, resultId, displayFn) {
+            const btn = document.getElementById(btnId);
+            btn.disabled = true;
+            const originalText = btn.textContent;
+            btn.textContent = 'Loading...';
+            
+            try {
+                // Make sure current day is saved first
+                await saveDayIfNeeded();
+                
+                const res = await fetch(`/api/plant/${endpoint}`, { method: 'POST' });
+                const result = await res.json();
+                if (result.error) throw new Error(result.error);
+                
+                displayFn(result);
+                document.getElementById(resultId).style.display = 'block';
+                showStatus('Saved!', 'success');
+                await loadPlantData();
+            } catch (err) {
+                showStatus('Error: ' + err.message, 'error');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = originalText;
+            }
+        }
+        
+        async function saveDayIfNeeded() {
+            // Quick save to ensure day is set
+            await fetch('/api/plant', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    name: plantData.name,
+                    city: plantData.city,
+                    indoorLocation: plantData.indoorLocation,
+                    dayOfPlanting: `Day ${currentDay}`,
+                    feedback: document.getElementById('feedback').value,
+                    image: null
+                })
+            });
+        }
+        
+        document.getElementById('weatherBtn').addEventListener('click', () => {
+            callAPI('weather', 'weatherBtn', 'weatherResult', r => {
+                document.getElementById('weatherText').textContent = r.weather;
+            });
+        });
+        
+        document.getElementById('colorBtn').addEventListener('click', () => {
+            callAPI('color', 'colorBtn', 'colorResult', r => {
+                document.getElementById('colorDisplay').innerHTML = `<div class="color-display"><div class="color-square" style="background:${r.color}"></div><span class="color-hex">${r.color}</span></div>`;
+            });
+        });
+        
+        document.getElementById('leafBtn').addEventListener('click', () => {
+            callAPI('leafcount', 'leafBtn', 'leafResult', r => {
+                document.getElementById('leafDisplay').innerHTML = `<span class="leaf-count">${r.leafCount}</span> leaves`;
+            });
+        });
+        
+        document.getElementById('infectionBtn').addEventListener('click', () => {
+            callAPI('infections', 'infectionBtn', 'infectionResult', r => {
+                const isHealthy = r.infections.toLowerCase().includes('healthy');
+                document.getElementById('infectionText').innerHTML = `<span style="color:${isHealthy ? '#2e7d32' : '#c62828'}">${r.infections}</span>`;
+            });
+        });
+        
+        document.getElementById('growthBtn').addEventListener('click', () => {
+            callAPI('growth', 'growthBtn', 'growthResult', r => {
+                document.getElementById('growthDisplay').innerHTML = `<span class="growth-stage">${r.stage}</span>`;
+            });
+        });
+        
+        // Identify Plant Button (Plant.id API)
+        document.getElementById('identifyBtn').addEventListener('click', async () => {
+            const btn = document.getElementById('identifyBtn');
+            btn.disabled = true;
+            btn.textContent = 'Identifying...';
+            
+            try {
+                await saveDayIfNeeded();
+                const res = await fetch('/api/plant/identify', { method: 'POST' });
+                const result = await res.json();
+                if (result.error) throw new Error(result.error);
+                
+                // Show results in modal/alert
+                if (result.suggestions && result.suggestions.length > 0) {
+                    let html = '<div style="background:#e0f2f1;padding:20px;border-radius:12px;margin-top:15px;">';
+                    html += '<h3 style="color:#00695c;margin:0 0 15px;">🔎 Plant Identification Results</h3>';
+                    result.suggestions.forEach(s => {
+                        html += `<div style="background:white;padding:12px;border-radius:8px;margin-bottom:10px;border-left:4px solid #00897b;">`;
+                        html += `<strong style="font-size:18px;">#${s.rank} ${s.name}</strong>`;
+                        html += `<span style="float:right;background:#00897b;color:white;padding:4px 10px;border-radius:15px;font-weight:bold;">${s.probability}%</span>`;
+                        if (s.similar_images && s.similar_images.length > 0) {
+                            html += `<div style="margin-top:8px;display:flex;gap:8px;">`;
+                            s.similar_images.forEach(img => {
+                                if (img.url) {
+                                    html += `<img src="${img.url}" style="width:60px;height:60px;object-fit:cover;border-radius:6px;">`;
+                                }
+                            });
+                            html += `</div>`;
+                        }
+                        html += `</div>`;
+                    });
+                    html += '</div>';
+                    
+                    // Insert after button grid
+                    const existing = document.getElementById('identifyResult');
+                    if (existing) existing.remove();
+                    const div = document.createElement('div');
+                    div.id = 'identifyResult';
+                    div.innerHTML = html;
+                    document.querySelector('.button-grid').insertAdjacentElement('afterend', div);
+                    
+                    showStatus('Plant identified!', 'success');
+                } else {
+                    showStatus('Could not identify plant', 'error');
+                }
+            } catch (err) {
+                showStatus('Error: ' + err.message, 'error');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '🔎 Identify Plant';
+            }
+        });
+        
+        // Predict Button
+        document.getElementById('predictBtn').addEventListener('click', async () => {
+            const btn = document.getElementById('predictBtn');
+            btn.disabled = true;
+            btn.textContent = 'Generating...';
+            
+            try {
+                await saveDayIfNeeded();
+                const res = await fetch('/api/plant/predict', { method: 'POST' });
+                const result = await res.json();
+                if (result.error) throw new Error(result.error);
+                
+                // Reload data and show comparison
+                await loadPlantData();
+                
+                // Manually update the comparison view with new prediction
+                const predictedImg = document.getElementById('predictedImg');
+                const realImg = document.getElementById('realImg');
+                const sliderContainer = document.getElementById('sliderContainer');
+                const noImageMsg = document.getElementById('noImageMsg');
+                
+                // Add timestamp to bust cache
+                predictedImg.src = result.predictedImage + '?t=' + Date.now();
+                predictedImg.style.display = 'block';
+                realImg.style.display = 'block';
+                noImageMsg.style.display = 'none';
+                sliderContainer.style.display = 'block';
+                document.getElementById('compareSlider').value = 0;
+                updateSlider(0);
+                
+                showStatus('Prediction generated!', 'success');
+            } catch (err) {
+                showStatus('Error: ' + err.message, 'error');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '🔮 Generate Prediction';
+            }
+        });
+        
+        // Clear
+        document.getElementById('clearBtn').addEventListener('click', async () => {
+            if (!confirm('Delete all plant data?')) return;
+            await fetch('/api/plant/clear', { method: 'POST' });
+            showStatus('Data cleared!', 'success');
+            plantData = null;
+            currentDay = -1;
+            document.getElementById('setupForm').reset();
+            document.getElementById('aboutResult').style.display = 'none';
+            document.getElementById('searchAboutBtn').style.display = 'none';
+            updateDisplay();
+        });
+        
+        // Slider for image comparison
+        function updateSlider(value) {
+            const realImg = document.getElementById('realImg');
+            const percentDisplay = document.getElementById('percentDisplay');
+            // 0 = 100% real, 100 = 100% predicted
+            realImg.style.opacity = 1 - (value / 100);
+            percentDisplay.textContent = `${100 - value}% Real → ${value}% Predicted`;
+        }
+        
+        document.getElementById('compareSlider').addEventListener('input', (e) => {
+            updateSlider(parseInt(e.target.value));
+        });
+        
+        function showStatus(msg, type) {
+            const el = document.getElementById('status');
+            el.textContent = msg;
+            el.className = type;
+            el.style.display = 'block';
+            setTimeout(() => el.style.display = 'none', 3000);
+        }
+    </script>
+</body>
+</html>
