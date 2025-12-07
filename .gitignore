@@ -1,0 +1,15 @@
+# Environment variables
+.env
+
+# Dependencies
+node_modules/
+
+# Logs
+*.log
+server.log
+
+# macOS
+.DS_Store
+
+# IDE
+*.code-workspace

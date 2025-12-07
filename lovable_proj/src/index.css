@@ -1,0 +1,175 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&display=swap');
+
+@layer base {
+  :root {
+    --background: 45 30% 97%;
+    --foreground: 150 25% 15%;
+
+    --card: 45 40% 98%;
+    --card-foreground: 150 25% 15%;
+
+    --popover: 45 40% 98%;
+    --popover-foreground: 150 25% 15%;
+
+    --primary: 150 35% 30%;
+    --primary-foreground: 45 30% 97%;
+
+    --secondary: 25 45% 55%;
+    --secondary-foreground: 45 30% 97%;
+
+    --muted: 150 15% 90%;
+    --muted-foreground: 150 15% 45%;
+
+    --accent: 135 30% 75%;
+    --accent-foreground: 150 35% 20%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 150 15% 85%;
+    --input: 150 15% 85%;
+    --ring: 150 35% 30%;
+
+    --radius: 1rem;
+
+    /* Custom design tokens */
+    --forest: 150 35% 30%;
+    --forest-light: 150 30% 45%;
+    --terracotta: 25 45% 55%;
+    --terracotta-light: 25 50% 70%;
+    --sage: 135 30% 75%;
+    --sage-dark: 135 25% 55%;
+    --cream: 45 30% 97%;
+    --soil: 30 25% 25%;
+    --sunlight: 45 90% 60%;
+    --water: 200 70% 55%;
+
+    /* Gradients */
+    --gradient-earth: linear-gradient(135deg, hsl(var(--forest)) 0%, hsl(var(--sage-dark)) 100%);
+    --gradient-sunrise: linear-gradient(135deg, hsl(var(--terracotta-light)) 0%, hsl(var(--sunlight)) 100%);
+    --gradient-glass: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.6) 100%);
+
+    /* Shadows */
+    --shadow-soft: 0 4px 20px -4px hsl(var(--forest) / 0.15);
+    --shadow-glow: 0 0 40px hsl(var(--sage) / 0.4);
+    --shadow-card: 0 8px 32px -8px hsl(var(--soil) / 0.1);
+
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  .dark {
+    --background: 150 20% 8%;
+    --foreground: 45 30% 95%;
+
+    --card: 150 18% 12%;
+    --card-foreground: 45 30% 95%;
+
+    --popover: 150 18% 12%;
+    --popover-foreground: 45 30% 95%;
+
+    --primary: 135 40% 55%;
+    --primary-foreground: 150 20% 8%;
+
+    --secondary: 25 40% 45%;
+    --secondary-foreground: 45 30% 95%;
+
+    --muted: 150 15% 20%;
+    --muted-foreground: 150 10% 60%;
+
+    --accent: 135 25% 35%;
+    --accent-foreground: 45 30% 95%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 150 15% 20%;
+    --input: 150 15% 20%;
+    --ring: 135 40% 55%;
+
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    font-family: 'Outfit', sans-serif;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Fraunces', serif;
+  }
+}
+
+@layer components {
+  .glass-card {
+    @apply bg-card/80 backdrop-blur-xl border border-border/50 rounded-2xl;
+    box-shadow: var(--shadow-card);
+  }
+
+  .gradient-earth {
+    background: var(--gradient-earth);
+  }
+
+  .gradient-sunrise {
+    background: var(--gradient-sunrise);
+  }
+
+  .text-gradient {
+    background: var(--gradient-earth);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+}
+
+@layer utilities {
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  .animate-pulse-soft {
+    animation: pulse-soft 3s ease-in-out infinite;
+  }
+
+  .animate-grow {
+    animation: grow 0.5s ease-out forwards;
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+
+  @keyframes pulse-soft {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+  }
+
+  @keyframes grow {
+    from { transform: scale(0.95); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+}

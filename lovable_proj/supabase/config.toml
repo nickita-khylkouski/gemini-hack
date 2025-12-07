@@ -1,0 +1,7 @@
+project_id = "iuwyuhrronnnxwcpcjow"
+
+[functions.analyze-plant]
+verify_jwt = false
+
+[functions.plant-chat]
+verify_jwt = false

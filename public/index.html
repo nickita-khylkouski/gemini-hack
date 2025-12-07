@@ -3,853 +3,946 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Plant Tracker</title>
+    <title>Plant Health Analyzer</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fraunces:opsz,wght@9..144,400;600;700&display=swap" rel="stylesheet">
+    <!-- Markdown Parser -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['Fraunces', 'serif'],
+                    },
+                    colors: {
+                        plant: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                            700: '#15803d',
+                            800: '#166534',
+                            900: '#14532d',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
     <style>
-        * { box-sizing: border-box; }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            max-width: 700px;
-            margin: 0 auto;
-            padding: 20px;
-            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
-            min-height: 100vh;
-        }
-        .container {
-            background: white;
-            padding: 30px;
-            border-radius: 16px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-        }
-        
-        /* Day Navigation */
-        .day-nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 20px;
-            background: linear-gradient(135deg, #2e7d32 0%, #388e3c 100%);
-            border-radius: 12px;
-            margin-bottom: 25px;
-            color: white;
-        }
-        .day-nav button {
-            background: rgba(255,255,255,0.2);
-            border: none;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 16px;
-            transition: background 0.2s;
-        }
-        .day-nav button:hover { background: rgba(255,255,255,0.3); }
-        .day-nav button:disabled { opacity: 0.5; cursor: not-allowed; }
-        .current-day {
-            font-size: 24px;
-            font-weight: bold;
-        }
-        
-        /* Page Sections */
-        .page { display: none; }
-        .page.active { display: block; }
-        
-        h1 { text-align: center; color: #2e7d32; margin-bottom: 25px; }
-        h2 { color: #2e7d32; border-bottom: 2px solid #c8e6c9; padding-bottom: 10px; }
-        
-        .form-group { margin-bottom: 20px; }
-        label { display: block; margin-bottom: 8px; font-weight: 600; color: #37474f; }
-        input[type="text"], textarea {
-            width: 100%; padding: 12px; border: 2px solid #e0e0e0;
-            border-radius: 8px; font-size: 16px; transition: border-color 0.2s;
-        }
-        input:focus, textarea:focus { border-color: #2e7d32; outline: none; }
-        
-        button {
-            width: 100%; padding: 14px; border: none; border-radius: 8px;
-            cursor: pointer; font-size: 16px; font-weight: 600;
-            margin-bottom: 10px; color: white; transition: transform 0.1s, opacity 0.2s;
-        }
-        button:active { transform: scale(0.98); }
-        button:disabled { opacity: 0.6; cursor: not-allowed; }
-        
-        .btn-primary { background: linear-gradient(135deg, #2e7d32 0%, #388e3c 100%); }
-        .btn-search { background: linear-gradient(135deg, #7b1fa2 0%, #9c27b0 100%); }
-        .btn-weather { background: linear-gradient(135deg, #1565c0 0%, #1976d2 100%); }
-        .btn-color { background: linear-gradient(135deg, #00796b 0%, #009688 100%); }
-        .btn-leaf { background: linear-gradient(135deg, #2e7d32 0%, #43a047 100%); }
-        .btn-infection { background: linear-gradient(135deg, #e65100 0%, #f57c00 100%); }
-        .btn-growth { background: linear-gradient(135deg, #6a1b9a 0%, #8e24aa 100%); }
-        .btn-danger { background: linear-gradient(135deg, #c62828 0%, #e53935 100%); }
-        
-        .row { display: flex; gap: 15px; }
-        .col { flex: 1; }
-        
-        /* Image Drop Zone */
-        .drop-zone {
-            width: 100%; min-height: 200px; padding: 25px;
-            display: flex; align-items: center; justify-content: center;
-            border: 3px dashed #c8e6c9; border-radius: 12px;
-            cursor: pointer; background: #f1f8e9;
-            position: relative; transition: all 0.2s;
-        }
-        .drop-zone:hover { border-color: #2e7d32; background: #e8f5e9; }
-        .drop-zone--over { border-color: #2e7d32; background: #c8e6c9; }
-        .drop-zone__input { display: none; }
-        .drop-zone__thumb {
-            width: 100%; border-radius: 10px;
-            max-height: 300px; object-fit: contain;
-        }
-        .drop-zone__text { color: #689f38; font-weight: 500; }
-        
-        /* Image Comparison */
-        .images-section { margin-bottom: 20px; }
         .image-compare {
-            position: relative; width: 100%; height: 450px;
-            background: #1a1a1a; border-radius: 12px; overflow: hidden;
+            position: relative;
+            width: 100%;
+            height: 400px;
+            background: #f3f4f6;
+            border-radius: 0.75rem;
+            overflow: hidden;
         }
         .image-compare img {
-            position: absolute; top: 0; left: 0;
-            width: 100%; height: 100%; object-fit: contain;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
         }
-        .image-compare .predicted-img { z-index: 1; }
-        .image-compare .real-img { z-index: 2; }
-        .slider-container {
-            margin-top: 15px; padding: 15px; background: #f5f5f5;
-            border-radius: 12px; text-align: center;
+        /* Custom range slider styling */
+        input[type=range] {
+            -webkit-appearance: none; 
+            background: transparent; 
         }
-        .slider-labels { display: flex; justify-content: space-between; margin-bottom: 10px; font-weight: 600; }
-        .slider-labels .real { color: #2e7d32; }
-        .slider-labels .predicted { color: #7b1fa2; }
-        .compare-slider {
-            width: 100%; height: 8px; appearance: none;
-            background: linear-gradient(to right, #2e7d32, #9c27b0);
-            border-radius: 4px; cursor: pointer;
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 20px;
+            width: 20px;
+            border-radius: 50%;
+            background: #16a34a;
+            cursor: pointer;
+            margin-top: -8px; 
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
         }
-        .compare-slider::-webkit-slider-thumb {
-            appearance: none; width: 24px; height: 24px;
-            background: white; border-radius: 50%;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.3); cursor: pointer;
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 4px;
+            background: #d1d5db;
+            border-radius: 2px;
         }
-        .percent-display {
-            font-size: 32px; font-weight: bold; margin: 15px 0;
-            background: linear-gradient(to right, #2e7d32, #9c27b0);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-        }
-        .upload-row { display: flex; gap: 10px; margin-top: 15px; }
-        .upload-row > * { flex: 1; }
-        .no-image { color: #bdbdbd; padding: 150px 20px; text-align: center; font-style: italic; }
-        
-        /* Results */
-        .result-box {
-            margin-top: 15px; padding: 15px; border-radius: 10px;
-            display: none; line-height: 1.6;
-        }
-        #aboutResult { background: #f3e5f5; border-left: 4px solid #9c27b0; }
-        #weatherResult { background: #e3f2fd; border-left: 4px solid #1976d2; }
-        #colorResult { background: #e0f2f1; border-left: 4px solid #009688; }
-        #leafResult { background: #e8f5e9; border-left: 4px solid #43a047; }
-        #infectionResult { background: #fff3e0; border-left: 4px solid #f57c00; }
-        #growthResult { background: #f3e5f5; border-left: 4px solid #8e24aa; }
-        
-        .result-title { margin: 0 0 10px 0; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; }
-        .color-display { display: flex; align-items: center; gap: 15px; }
-        .color-square { width: 50px; height: 50px; border-radius: 8px; border: 2px solid #333; }
-        .color-hex { font-size: 22px; font-weight: bold; font-family: monospace; }
-        .leaf-count { font-size: 32px; font-weight: bold; color: #2e7d32; }
-        .growth-stage { font-size: 24px; font-weight: bold; color: #8e24aa; }
-        
-        #status {
-            margin-top: 15px; padding: 12px; border-radius: 8px;
-            text-align: center; display: none; font-weight: 500;
-        }
-        .success { background: #c8e6c9; color: #2e7d32; }
-        .error { background: #ffcdd2; color: #c62828; }
-        
-        .info-display { background: #f5f5f5; padding: 15px; border-radius: 8px; margin-bottom: 15px; }
-        .info-label { font-size: 12px; color: #757575; text-transform: uppercase; }
-        .info-value { font-size: 18px; font-weight: 600; color: #37474f; }
-        
-        .button-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
-        .button-grid button { margin-bottom: 0; }
     </style>
 </head>
-<body>
-    <div class="container">
-        <!-- Day Navigation -->
-        <div class="day-nav">
-            <button id="prevDay">← Previous</button>
-            <span class="current-day" id="dayLabel">Plant Info</span>
-            <button id="nextDay">Next →</button>
-        </div>
-        
-        <!-- Page: Plant Setup (Day -1) -->
-        <div class="page" id="page-setup">
-            <h1>🌱 Plant Setup</h1>
-            <form id="setupForm">
-                <div class="form-group">
-                    <label>Plant Name</label>
-                    <input type="text" id="plantName" required placeholder="e.g., Chili Pepper">
+<body class="bg-gray-50 min-h-screen text-gray-800 font-sans">
+
+    <!-- SETUP VIEW (No Data) -->
+    <div id="setupView" class="hidden min-h-screen flex items-center justify-center p-4">
+        <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md border border-gray-100">
+            <div class="text-center mb-8">
+                <div class="inline-flex items-center justify-center w-16 h-16 bg-plant-100 rounded-full mb-4 text-plant-600">
+                    <i data-lucide="sprout" class="w-8 h-8"></i>
                 </div>
-                <div class="row">
-                    <div class="col">
-                        <div class="form-group">
-                            <label>City</label>
-                            <input type="text" id="city" required placeholder="e.g., San Francisco">
-                        </div>
-                    </div>
-                    <div class="col">
-                        <div class="form-group">
-                            <label>Indoor Location</label>
-                            <input type="text" id="indoorLocation" required placeholder="e.g., Living Room Window">
-                        </div>
-                    </div>
-                </div>
-                <button type="submit" class="btn-primary">Save Plant Info</button>
-                <button type="button" id="searchAboutBtn" class="btn-search" style="display:none;">🔍 Search About Plant</button>
-            </form>
-            
-            <div class="result-box" id="aboutResult">
-                <h4 class="result-title" style="color:#7b1fa2;">Plant Information</h4>
-                <div id="aboutText"></div>
-            </div>
-        </div>
-        
-        <!-- Page: Daily Tracking (Day 0+) -->
-        <div class="page" id="page-daily">
-            <h1>📅 Daily Tracking</h1>
-            
-            <div class="info-display">
-                <div class="row">
-                    <div class="col">
-                        <div class="info-label">Plant</div>
-                        <div class="info-value" id="displayName">-</div>
-                    </div>
-                    <div class="col">
-                        <div class="info-label">Location</div>
-                        <div class="info-value" id="displayLocation">-</div>
-                    </div>
-                </div>
+                <h1 class="font-serif text-2xl font-bold text-gray-900 mb-2">Plant Profile</h1>
+                <p class="text-gray-500 text-sm">Let's set up your plant tracker. Enter the details below to get started.</p>
             </div>
             
-            <!-- Image Comparison Section -->
-            <div class="images-section">
-                <label>Plant Growth Comparison</label>
-                <div class="image-compare" id="imageCompare">
-                    <img id="predictedImg" class="predicted-img" src="" alt="Predicted" style="display:none;">
-                    <img id="realImg" class="real-img" src="" alt="Real" style="display:none;">
-                    <div id="noImageMsg" class="no-image">Upload an image to see comparison</div>
+            <div class="space-y-5">
+                <div>
+                    <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Plant Name</label>
+                    <input type="text" id="setupName" class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-plant-500 focus:border-plant-500 outline-none transition" placeholder="e.g. Chili Pepper">
                 </div>
                 
-                <div class="slider-container" id="sliderContainer" style="display:none;">
-                    <div class="slider-labels">
-                        <span class="real">📷 Real (Today)</span>
-                        <span class="predicted">🔮 Predicted (Tomorrow)</span>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">City</label>
+                        <div class="relative">
+                            <input type="text" id="setupCity" class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-plant-500 focus:border-plant-500 outline-none transition pr-10" placeholder="San Francisco">
+                            <button id="setupLocBtn" class="absolute right-2 top-2 text-gray-400 hover:text-plant-600 p-2" title="Auto-detect Location">
+                                <i data-lucide="map-pin" class="w-4 h-4"></i>
+                            </button>
+                        </div>
                     </div>
-                    <input type="range" class="compare-slider" id="compareSlider" min="0" max="100" value="0">
-                    <div class="percent-display" id="percentDisplay">0% → 100%</div>
-                </div>
-                
-                <div class="upload-row">
-                    <div class="drop-zone" id="dropZone" style="min-height:80px;">
-                        <span class="drop-zone__text">📷 Upload Real Image</span>
-                        <input type="file" id="plantImage" class="drop-zone__input" accept="image/*">
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Location</label>
+                        <input type="text" id="setupLocation" class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-plant-500 focus:border-plant-500 outline-none transition" placeholder="Living Room">
                     </div>
-                    <button type="button" id="predictBtn" class="btn-search" style="margin:0;">🔮 Generate Prediction</button>
                 </div>
-            </div>
-            
-            <div class="form-group">
-                <label>Daily Notes / Feedback</label>
-                <textarea id="feedback" rows="3" placeholder="How does the plant look today?"></textarea>
-            </div>
-            
-            <button id="saveDayBtn" class="btn-primary">💾 Save Day Info</button>
-            
-            <div class="button-grid">
-                <button id="weatherBtn" class="btn-weather">☁️ Weather</button>
-                <button id="colorBtn" class="btn-color">🎨 Color</button>
-                <button id="leafBtn" class="btn-leaf">🍃 Leaves</button>
-                <button id="infectionBtn" class="btn-infection">🔬 Health</button>
-                <button id="growthBtn" class="btn-growth">🌱 Growth Stage</button>
-                <button id="identifyBtn" style="background: linear-gradient(135deg, #00695c 0%, #00897b 100%);">🔎 Identify Plant</button>
-            </div>
-            
-            <div class="result-box" id="weatherResult">
-                <h4 class="result-title" style="color:#1565c0;">Weather</h4>
-                <div id="weatherText"></div>
-            </div>
-            <div class="result-box" id="colorResult">
-                <h4 class="result-title" style="color:#00796b;">Plant Color</h4>
-                <div id="colorDisplay"></div>
-            </div>
-            <div class="result-box" id="leafResult">
-                <h4 class="result-title" style="color:#2e7d32;">Leaf Count</h4>
-                <div id="leafDisplay"></div>
-            </div>
-            <div class="result-box" id="infectionResult">
-                <h4 class="result-title" style="color:#e65100;">Health Check</h4>
-                <div id="infectionText"></div>
-            </div>
-            <div class="result-box" id="growthResult">
-                <h4 class="result-title" style="color:#6a1b9a;">Growth Stage</h4>
-                <div id="growthDisplay"></div>
+
+                <button id="startTrackingBtn" class="w-full bg-plant-600 hover:bg-plant-700 text-white py-4 rounded-xl font-bold text-lg shadow-lg hover:shadow-xl transition transform active:scale-95 flex items-center justify-center gap-2">
+                    <span>Start Tracking</span> <i data-lucide="rocket" class="w-5 h-5"></i>
+                </button>
             </div>
         </div>
-        
-        <button id="clearBtn" class="btn-danger" style="margin-top: 20px;">🗑️ Clear All Data</button>
-        <div id="status"></div>
     </div>
 
+    <!-- DASHBOARD VIEW (Data Exists) -->
+    <div id="dashboardView" class="hidden">
+    <!-- Header -->
+    <header class="bg-white border-b border-gray-200 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-4">
+                <div class="flex items-center gap-2">
+                    <span class="text-plant-600"><i data-lucide="sprout" class="w-6 h-6"></i></span>
+                    <h1 class="font-serif text-xl font-bold text-gray-900 tracking-tight hidden md:block">Plant Health Analyzer</h1>
+                </div>
+                
+                <!-- Profile Button -->
+                <button id="profileBtn" class="flex items-center gap-2 px-3 py-1.5 bg-gray-50 hover:bg-gray-100 text-gray-700 rounded-lg text-sm font-medium transition border border-gray-200">
+                    <i data-lucide="user" class="w-4 h-4"></i> Plant Profile
+                </button>
+            </div>
+            
+            <!-- Day Navigation -->
+            <div class="flex items-center bg-gray-100 rounded-lg p-1">
+                <button id="prevDay" class="px-3 py-1.5 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-white rounded-md transition disabled:opacity-50 flex items-center gap-1">
+                    <i data-lucide="chevron-left" class="w-4 h-4"></i> Prev
+                </button>
+                <span id="dayLabel" class="px-4 text-sm font-semibold text-gray-900 min-w-[80px] text-center">Day 0</span>
+                <button id="nextDay" class="px-3 py-1.5 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-white rounded-md transition disabled:opacity-50 flex items-center gap-1">
+                    Next <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        <!-- Status Notification -->
+        <div id="status" class="hidden mb-6 p-4 rounded-lg text-sm font-medium text-center transition-all duration-300"></div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            
+            <!-- LEFT COLUMN: Main Plant View (8 cols) -->
+            <div class="lg:col-span-8 space-y-6">
+                
+                <!-- Plant Setup / Info Card -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                    <div class="p-6 border-b border-gray-100 flex justify-between items-center">
+                        <h2 class="font-serif text-lg font-semibold text-gray-900">Plant Details</h2>
+                        <button id="saveInfoBtn" class="text-sm text-plant-600 hover:text-plant-700 font-medium">Save Changes</button>
+                    </div>
+                    <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Plant Name</label>
+                            <input type="text" id="plantName" class="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-plant-500 focus:border-plant-500 outline-none transition" placeholder="e.g. Chili Pepper">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Location</label>
+                            <div class="flex gap-2">
+                                <div class="relative flex-1">
+                                    <input type="text" id="city" class="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-plant-500 focus:border-plant-500 outline-none transition pr-8" placeholder="City">
+                                    <button id="dashboardLocBtn" class="absolute right-1 top-1 text-gray-400 hover:text-plant-600 p-1" title="Auto-detect Location">
+                                        <i data-lucide="map-pin" class="w-4 h-4"></i>
+                                    </button>
+                                </div>
+                                <input type="text" id="indoorLocation" class="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-plant-500 focus:border-plant-500 outline-none transition" placeholder="Room">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Image Visualization Card -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                    <div class="p-6 border-b border-gray-100 flex justify-between items-center">
+                        <h2 class="font-serif text-lg font-semibold text-gray-900">Growth Visualization</h2>
+                        <div class="flex gap-2">
+                            <label for="plantImage" class="cursor-pointer px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium rounded-lg transition flex items-center gap-2">
+                                <i data-lucide="camera" class="w-4 h-4"></i> Upload Image
+                            </label>
+                            <input type="file" id="plantImage" class="hidden" accept="image/*">
+                        </div>
+                    </div>
+                    
+                    <div class="p-6">
+                        <!-- Image Container -->
+                        <div class="image-compare relative bg-gray-100 rounded-lg flex items-center justify-center text-center">
+                            <img id="predictedImg" class="absolute inset-0 w-full h-full object-contain" style="display:none;" alt="Predicted">
+                            <img id="realImg" class="absolute inset-0 w-full h-full object-contain relative z-10" style="display:none;" alt="Real">
+                            
+                            <!-- Empty State -->
+                            <div id="noImageMsg" class="text-gray-400 p-8 flex flex-col items-center">
+                                <i data-lucide="image" class="w-12 h-12 mb-3 text-gray-300"></i>
+                                <p>No image for this day.</p>
+                                <p class="text-sm">Upload a photo to start analyzing.</p>
+                            </div>
+                        </div>
+
+                        <!-- Comparison Slider -->
+                        <div id="sliderContainer" class="mt-6 hidden">
+                            <div class="flex justify-between text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
+                                <span>Real (Today)</span>
+                                <span>Predicted (Tomorrow)</span>
+                            </div>
+                            <input type="range" id="compareSlider" min="0" max="100" value="0" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                        </div>
+
+                        <!-- Predict Prompt -->
+                        <div id="predictPrompt" class="hidden mt-6 bg-purple-50 border border-purple-100 rounded-lg p-4 flex items-center justify-between">
+                            <div class="flex items-center gap-3">
+                                <span class="text-purple-600"><i data-lucide="sparkles" class="w-6 h-6"></i></span>
+                                <span class="text-sm text-purple-900">Generate a prediction for tomorrow's growth?</span>
+                            </div>
+                            <button id="predictBtn" class="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium rounded-lg transition">
+                                Generate
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Notes / Feedback -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                    <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Daily Notes</label>
+                    <textarea id="feedback" rows="3" class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-plant-500 focus:border-plant-500 outline-none transition" placeholder="Observations about the plant's health..."></textarea>
+                </div>
+            </div>
+
+            <!-- RIGHT COLUMN: Insights & Widgets (4 cols) -->
+            <div class="lg:col-span-4 space-y-6">
+                
+                <!-- Main Action -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 space-y-4">
+                    <button id="analyzeAllBtn" class="w-full bg-plant-600 hover:bg-plant-700 text-white py-3 px-4 rounded-xl shadow-sm font-semibold text-lg transition flex items-center justify-center gap-2 group">
+                        <i data-lucide="wand-2" class="w-5 h-5"></i> <span>Analyze Full Plant</span>
+                    </button>
+                    
+                    <!-- Specific Analysis Dropdown -->
+                    <div class="flex gap-2">
+                        <select id="analysisType" class="flex-1 bg-gray-50 border border-gray-200 text-gray-700 text-sm rounded-lg focus:ring-plant-500 focus:border-plant-500 block p-2.5">
+                            <option value="">Select specific analysis...</option>
+                            <option value="weather">☁️ Weather Data</option>
+                            <option value="leafcount">🍃 Leaf Count</option>
+                            <option value="color">🎨 Plant Color</option>
+                            <option value="infections">🔬 Health Check</option>
+                            <option value="growth">🌱 Growth Stage</option>
+                        </select>
+                        <button id="analyzeSpecificBtn" class="bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium rounded-lg text-sm px-4 py-2 transition disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                            Run
+                        </button>
+                    </div>
+
+                    <button id="identifyBtn" class="w-full bg-teal-600 hover:bg-teal-700 text-white py-3 px-4 rounded-xl shadow-sm font-semibold text-lg transition flex items-center justify-center gap-2 group mt-2">
+                        <i data-lucide="search" class="w-5 h-5"></i> <span>Identify Plant Species</span>
+                    </button>
+                    
+                    <!-- Identification Results -->
+                    <div id="identifyResults" class="hidden mt-4 space-y-3 max-h-96 overflow-y-auto"></div>
+
+                    <!-- Get Actionable Insights Button -->
+                    <button id="insightsBtn" class="w-full bg-amber-500 hover:bg-amber-600 text-white py-3 px-4 rounded-xl shadow-sm font-semibold text-lg transition flex items-center justify-center gap-2 group mt-2">
+                        <i data-lucide="lightbulb" class="w-5 h-5"></i> <span>Get Actionable Insights</span>
+                    </button>
+                    
+                    <!-- Insights Results -->
+                    <div id="insightsResults" class="hidden mt-4 bg-amber-50 border border-amber-200 rounded-xl p-4">
+                        <div class="flex items-center gap-2 mb-3">
+                            <i data-lucide="lightbulb" class="w-5 h-5 text-amber-600"></i>
+                            <h4 class="font-semibold text-amber-900">Today's Insights</h4>
+                        </div>
+                        <div id="insightsContent" class="text-sm text-amber-900 leading-relaxed prose prose-sm max-w-none"></div>
+                    </div>
+                </div>
+
+                <!-- Weather Widget -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="font-serif font-semibold text-gray-900">Weather</h3>
+                        <span class="text-xs bg-blue-50 text-blue-600 px-2 py-1 rounded-full font-medium">Local</span>
+                    </div>
+                    
+                    <div id="weatherContent" class="space-y-4">
+                        <div class="text-gray-400 text-sm italic">No weather data. Click Analyze.</div>
+                    </div>
+                </div>
+
+                <!-- Sunlight Widget -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="font-serif font-semibold text-gray-900">Daily Sunlight</h3>
+                        <span class="text-yellow-500"><i data-lucide="sun" class="w-6 h-6"></i></span>
+                    </div>
+                    
+                    <div id="sunlightContent" class="flex flex-col items-center">
+                        <div class="text-gray-400 text-sm italic w-full text-left">No sunlight data.</div>
+                    </div>
+                </div>
+
+                <!-- Quick Stats Grid -->
+                <div class="grid grid-cols-2 gap-4">
+                    <!-- Leaf Count -->
+                    <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-200">
+                        <div class="text-gray-400 text-xs font-medium uppercase mb-1">Leaves</div>
+                        <div id="leafDisplay" class="text-2xl font-serif font-bold text-gray-900">-</div>
+                        <div class="text-xs text-green-600 mt-1">Count</div>
+                    </div>
+
+                    <!-- Growth Stage -->
+                    <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-200">
+                        <div class="text-gray-400 text-xs font-medium uppercase mb-1">Stage</div>
+                        <div id="stageDisplay" class="text-lg font-serif font-bold text-gray-900 leading-tight">-</div>
+                    </div>
+
+                    <!-- Color -->
+                    <div class="col-span-2 bg-white p-4 rounded-xl shadow-sm border border-gray-200 flex items-center justify-between">
+                        <div>
+                            <div class="text-gray-400 text-xs font-medium uppercase mb-1">Avg Color</div>
+                            <div id="colorHex" class="text-sm font-mono text-gray-600">-</div>
+                        </div>
+                        <div id="colorBox" class="w-10 h-10 rounded-lg border border-gray-200 bg-gray-100 shadow-sm"></div>
+                    </div>
+                </div>
+
+                <!-- Health Status -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                    <h3 class="font-serif font-semibold text-gray-900 mb-3">Health Status</h3>
+                    <div id="healthDisplay" class="p-3 bg-gray-50 rounded-lg text-sm text-gray-600 border border-gray-100">
+                        No health analysis available.
+                    </div>
+                </div>
+
+                <!-- About Plant -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                    <div class="flex items-center justify-between mb-3">
+                        <h3 class="font-serif font-semibold text-gray-900">About</h3>
+                    </div>
+                    <div id="aboutContent" class="text-sm text-gray-600 leading-relaxed max-h-40 overflow-y-auto pr-2">
+                        Plant description will appear here after identification or enhancement.
+                    </div>
+                </div>
+                
+                <button id="clearBtn" class="w-full text-xs text-red-400 hover:text-red-600 py-2">Clear All Data</button>
+
+            </div>
+        </div>
+    </main>
+    </div> <!-- End Dashboard View -->
+
     <script>
-        // State
+        // --- State Management ---
         let currentDay = -1;
         let plantData = null;
         let currentFile = null;
-        
-        // Elements
-        const dayLabel = document.getElementById('dayLabel');
-        const prevBtn = document.getElementById('prevDay');
-        const nextBtn = document.getElementById('nextDay');
-        const pageSetup = document.getElementById('page-setup');
-        const pageDaily = document.getElementById('page-daily');
-        
-        // Initialize
+
+        // --- Elements ---
+        const els = {
+            // Setup Elements
+            setupView: document.getElementById('setupView'),
+            dashboardView: document.getElementById('dashboardView'),
+            setupName: document.getElementById('setupName'),
+            setupCity: document.getElementById('setupCity'),
+            setupLocation: document.getElementById('setupLocation'),
+            startBtn: document.getElementById('startTrackingBtn'),
+            setupLocBtn: document.getElementById('setupLocBtn'),
+
+            // Header Elements
+            profileBtn: document.getElementById('profileBtn'),
+            dashboardLocBtn: document.getElementById('dashboardLocBtn'),
+
+            // Dashboard Elements
+            plantName: document.getElementById('plantName'),
+            city: document.getElementById('city'),
+            indoorLocation: document.getElementById('indoorLocation'),
+            dayLabel: document.getElementById('dayLabel'),
+            prevBtn: document.getElementById('prevDay'),
+            nextBtn: document.getElementById('nextDay'),
+            feedback: document.getElementById('feedback'),
+            realImg: document.getElementById('realImg'),
+            predictedImg: document.getElementById('predictedImg'),
+            noImageMsg: document.getElementById('noImageMsg'),
+            sliderContainer: document.getElementById('sliderContainer'),
+            compareSlider: document.getElementById('compareSlider'),
+            fileInput: document.getElementById('plantImage'),
+            weatherContent: document.getElementById('weatherContent'),
+            sunlightContent: document.getElementById('sunlightContent'),
+            leafDisplay: document.getElementById('leafDisplay'),
+            colorBox: document.getElementById('colorBox'),
+            colorHex: document.getElementById('colorHex'),
+            healthDisplay: document.getElementById('healthDisplay'),
+            stageDisplay: document.getElementById('stageDisplay'),
+            aboutContent: document.getElementById('aboutContent'),
+            predictPrompt: document.getElementById('predictPrompt'),
+            status: document.getElementById('status')
+        };
+
+        // Initialize Icons
+        function refreshIcons() {
+            if (window.lucide) {
+                lucide.createIcons();
+            }
+        }
+
+        // --- Initialization ---
         loadPlantData();
-        
+
         async function loadPlantData() {
-            const res = await fetch('/api/plant');
-            const data = await res.json();
-            plantData = data.plant;
-            
-            if (plantData) {
-                currentDay = plantData.currentDay || 0;
-                fillSetupForm();
-                updateDisplay();
-            } else {
-                currentDay = -1;
-                updateDisplay();
+            try {
+                const res = await fetch('/api/plant');
+                const data = await res.json();
+                plantData = data.plant;
+                
+                if (plantData) {
+                    currentDay = plantData.currentDay || 0;
+                    if (currentDay < 0) currentDay = 0; 
+                    fillGlobalInfo();
+                    updateDisplay();
+                } else {
+                    currentDay = 0; 
+                    updateDisplay();
+                }
+                refreshIcons();
+            } catch (e) {
+                console.error("Failed to load data", e);
             }
         }
-        
-        function fillSetupForm() {
+
+        function fillGlobalInfo() {
             if (!plantData) return;
-            document.getElementById('plantName').value = plantData.name || '';
-            document.getElementById('city').value = plantData.city || '';
-            document.getElementById('indoorLocation').value = plantData.indoorLocation || '';
+            // Fill Dashboard inputs
+            els.plantName.value = plantData.name || '';
+            els.city.value = plantData.city || '';
+            els.indoorLocation.value = plantData.indoorLocation || '';
             
-            if (plantData.about) {
-                document.getElementById('aboutText').innerHTML = plantData.about;
-                document.getElementById('aboutResult').style.display = 'block';
-            }
-            document.getElementById('searchAboutBtn').style.display = 'block';
+            // Fill Setup inputs (for editing cases or if we fall back)
+            els.setupName.value = plantData.name || '';
+            els.setupCity.value = plantData.city || '';
+            els.setupLocation.value = plantData.indoorLocation || '';
+
+            if (plantData.about) els.aboutContent.innerHTML = marked.parse(plantData.about);
         }
-        
+
+        // --- Core UI Updates ---
         function updateDisplay() {
-            // Update day label
+            if (!plantData || !plantData.name) {
+                currentDay = -1;
+            }
+
             if (currentDay === -1) {
-                dayLabel.textContent = 'Plant Info';
-                pageSetup.classList.add('active');
-                pageDaily.classList.remove('active');
-            } else {
-                dayLabel.textContent = `Day ${currentDay}`;
-                pageSetup.classList.remove('active');
-                pageDaily.classList.add('active');
-                loadDayData(currentDay);
+                els.setupView.classList.remove('hidden');
+                els.dashboardView.classList.add('hidden');
+                els.startBtn.innerHTML = (plantData && plantData.name ? 'Save Profile' : 'Start Tracking') + ' <i data-lucide="rocket" class="w-5 h-5 inline"></i>';
+                refreshIcons();
+                return; 
             }
-            
-            prevBtn.disabled = currentDay <= -1;
-            nextBtn.disabled = currentDay >= 45;
-            
-            if (plantData) {
-                document.getElementById('displayName').textContent = plantData.name || '-';
-                document.getElementById('displayLocation').textContent = `${plantData.indoorLocation}, ${plantData.city}` || '-';
-            }
+
+            els.setupView.classList.add('hidden');
+            els.dashboardView.classList.remove('hidden');
+
+            els.dayLabel.textContent = `Day ${currentDay}`;
+            els.prevBtn.disabled = currentDay <= 0;
+            // No upper limit on days - plant can grow indefinitely
+            els.nextBtn.disabled = false;
+
+            loadDayData(currentDay);
+            refreshIcons();
         }
-        
+
         function loadDayData(day) {
+            // Reset Views
+            els.noImageMsg.style.display = 'block';
+            els.realImg.style.display = 'none';
+            els.realImg.style.opacity = '1'; 
+            els.predictedImg.style.display = 'none';
+            els.sliderContainer.style.display = 'none';
+            els.predictPrompt.style.display = 'none';
+            resetWidgets();
+
             if (!plantData || !plantData.days) return;
-            
             const dayKey = `day${day}`;
             const dayData = plantData.days[dayKey] || {};
+
+            els.feedback.value = dayData.feedback || '';
+
+            const predictedSrc = dayData.predictedImage;
             
-            // Clear previous
-            hideAllResults();
-            const thumb = document.querySelector('.drop-zone__thumb');
-            if (thumb) thumb.remove();
-            document.querySelector('.drop-zone__text').style.display = 'block';
-            currentFile = null;
-            
-            document.getElementById('feedback').value = dayData.feedback || '';
-            
-            // Image comparison overlay
-            const realImg = document.getElementById('realImg');
-            const predictedImg = document.getElementById('predictedImg');
-            const noImageMsg = document.getElementById('noImageMsg');
-            const sliderContainer = document.getElementById('sliderContainer');
-            const compareSlider = document.getElementById('compareSlider');
-            
-            // Get predicted image (either from this day or previous)
-            const predictedSrc = dayData.predictedImage || dayData.predictedFromPrevious;
-            
-            if (dayData.image && predictedSrc) {
-                // Both images - show comparison
-                realImg.src = dayData.image;
-                predictedImg.src = predictedSrc;
-                realImg.style.display = 'block';
-                predictedImg.style.display = 'block';
-                noImageMsg.style.display = 'none';
-                sliderContainer.style.display = 'block';
-                compareSlider.value = 0;
-                updateSlider(0);
-            } else if (dayData.image) {
-                // Only real image
-                realImg.src = dayData.image;
-                realImg.style.display = 'block';
-                realImg.style.opacity = 1;
-                predictedImg.style.display = 'none';
-                noImageMsg.style.display = 'none';
-                sliderContainer.style.display = 'none';
-            } else {
-                // No images
-                realImg.style.display = 'none';
-                predictedImg.style.display = 'none';
-                noImageMsg.style.display = 'block';
-                sliderContainer.style.display = 'none';
+            if (dayData.image) {
+                els.realImg.src = dayData.image;
+                els.realImg.style.display = 'block';
+                els.noImageMsg.style.display = 'none';
+
+                if (predictedSrc) {
+                    els.predictedImg.src = predictedSrc;
+                    els.predictedImg.style.display = 'block';
+                    els.sliderContainer.style.display = 'block';
+                    els.compareSlider.value = 0;
+                    updateSliderOpacity(0);
+                } else {
+                    els.predictPrompt.style.display = 'flex';
+                }
             }
-            if (dayData.weather) {
-                document.getElementById('weatherText').textContent = dayData.weather;
-                document.getElementById('weatherResult').style.display = 'block';
-            }
+
+            if (dayData.weather) renderWeather(dayData.weather);
+            if (dayData.leafCount) els.leafDisplay.textContent = dayData.leafCount;
             if (dayData.plantColor) {
-                document.getElementById('colorDisplay').innerHTML = `<div class="color-display"><div class="color-square" style="background:${dayData.plantColor}"></div><span class="color-hex">${dayData.plantColor}</span></div>`;
-                document.getElementById('colorResult').style.display = 'block';
+                els.colorBox.style.backgroundColor = dayData.plantColor;
+                els.colorHex.textContent = dayData.plantColor;
             }
-            if (dayData.leafCount) {
-                document.getElementById('leafDisplay').innerHTML = `<span class="leaf-count">${dayData.leafCount}</span> leaves`;
-                document.getElementById('leafResult').style.display = 'block';
-            }
+            if (dayData.growthStage) els.stageDisplay.textContent = dayData.growthStage;
             if (dayData.infections) {
                 const isHealthy = dayData.infections.toLowerCase().includes('healthy');
-                document.getElementById('infectionText').innerHTML = `<span style="color:${isHealthy ? '#2e7d32' : '#c62828'}">${dayData.infections}</span>`;
-                document.getElementById('infectionResult').style.display = 'block';
+                els.healthDisplay.innerHTML = `<span class="${isHealthy ? 'text-green-600 font-medium' : 'text-red-600 font-medium'}">${dayData.infections}</span>`;
             }
-            if (dayData.growthStage) {
-                document.getElementById('growthDisplay').innerHTML = `<span class="growth-stage">${dayData.growthStage}</span>`;
-                document.getElementById('growthResult').style.display = 'block';
-            }
+            refreshIcons();
         }
-        
-        function hideAllResults() {
-            ['weatherResult', 'colorResult', 'leafResult', 'infectionResult', 'growthResult'].forEach(id => {
-                document.getElementById(id).style.display = 'none';
-            });
+
+        function resetWidgets() {
+            els.weatherContent.innerHTML = '<div class="text-gray-400 text-sm italic">No weather data. Click Analyze.</div>';
+            els.sunlightContent.innerHTML = '<div class="text-gray-400 text-sm italic w-full text-left">No sunlight data.</div>';
+            els.leafDisplay.textContent = '-';
+            els.colorBox.style.backgroundColor = '#f3f4f6';
+            els.colorHex.textContent = '-';
+            els.stageDisplay.textContent = '-';
+            els.healthDisplay.textContent = 'No health analysis available.';
         }
-        
-        function showThumbnail(src) {
-            const dropZone = document.getElementById('dropZone');
-            document.querySelector('.drop-zone__text').style.display = 'none';
-            let thumb = dropZone.querySelector('.drop-zone__thumb');
-            if (!thumb) {
-                thumb = document.createElement('div');
-                thumb.classList.add('drop-zone__thumb');
-                dropZone.appendChild(thumb);
-            }
-            thumb.style.backgroundImage = `url('${src}')`;
-        }
-        
-        // Navigation
-        prevBtn.addEventListener('click', () => { currentDay--; updateDisplay(); });
-        nextBtn.addEventListener('click', () => { currentDay++; updateDisplay(); });
-        
-        // Setup Form
-        document.getElementById('setupForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const btn = e.target.querySelector('button[type="submit"]');
-            btn.disabled = true;
-            btn.textContent = 'Saving...';
+
+        function renderWeather(weatherString) {
+            const getVal = (key) => {
+                const regex = new RegExp(key + '[\\s:]+([^,]+)', 'i');
+                const match = weatherString.match(regex);
+                return match ? match[1].trim() : null;
+            };
+
+            const high = getVal('High') || '?';
+            const low = getVal('Low') || '?';
+            const humidity = getVal('Humidity') || '?';
+            const sunrise = getVal('Sunrise') || '?';
+            const sunset = getVal('Sunset') || '?';
             
-            try {
-                const res = await fetch('/api/plant', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        name: document.getElementById('plantName').value,
-                        city: document.getElementById('city').value,
-                        indoorLocation: document.getElementById('indoorLocation').value,
-                        dayOfPlanting: 'Day 0',
-                        feedback: '',
-                        image: null
-                    })
-                });
-                const result = await res.json();
-                if (result.success) {
-                    showStatus('Plant info saved!', 'success');
-                    document.getElementById('searchAboutBtn').style.display = 'block';
-                    await loadPlantData();
-                }
-            } catch (err) {
-                showStatus('Error: ' + err.message, 'error');
-            } finally {
-                btn.disabled = false;
-                btn.textContent = 'Save Plant Info';
-            }
-        });
-        
-        // Search About
-        document.getElementById('searchAboutBtn').addEventListener('click', async () => {
-            const btn = document.getElementById('searchAboutBtn');
-            btn.disabled = true;
-            btn.textContent = 'Searching...';
+            let daylightStr = getVal('Daylight') || '';
+            let hours = 0;
+            const hMatch = daylightStr.match(/(\d+)\s*hour/i);
+            if (hMatch) hours += parseFloat(hMatch[1]);
+            const mMatch = daylightStr.match(/(\d+)\s*minute/i);
+            if (mMatch) hours += parseFloat(mMatch[1]) / 60;
             
-            try {
-                const res = await fetch('/api/plant/enhance', { method: 'POST' });
-                const result = await res.json();
-                if (result.error) throw new Error(result.error);
+            const displayHours = hours > 0 ? hours.toFixed(1) + 'h' : '-';
+
+            let icon = 'cloud';
+            const tempVal = parseInt(high);
+            if (!isNaN(tempVal)) {
+                if (tempVal > 75) icon = 'sun';
+                else if (tempVal < 50) icon = 'cloud-rain';
+            }
+
+            const weatherHtml = `
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center gap-3">
+                        <span class="text-4xl shadow-sm bg-blue-50 rounded-lg p-2 flex items-center justify-center">
+                            <i data-lucide="${icon}" class="w-8 h-8"></i>
+                        </span>
+                        <div>
+                            <div class="text-2xl font-bold text-gray-900">${high}</div>
+                            <div class="text-xs text-gray-500">Low: ${low}</div>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-sm font-medium text-blue-600 flex items-center justify-end gap-1"><i data-lucide="droplets" class="w-3 h-3"></i> ${humidity}</div>
+                        <div class="text-xs text-gray-400 mt-1">Humidity</div>
+                    </div>
+                </div>
+            `;
+            els.weatherContent.innerHTML = weatherHtml;
+
+            const percentage = Math.min((hours / 14) * 100, 100); 
+            
+            const sunlightHtml = `
+                <div class="relative w-32 h-32 flex items-center justify-center mb-4">
+                    <div class="absolute inset-0 rounded-full border-8 border-gray-100"></div>
+                    <div class="absolute inset-0 rounded-full" style="background: conic-gradient(#eab308 ${percentage}%, transparent ${percentage}% 100%); mask: radial-gradient(transparent 55%, black 56%); -webkit-mask: radial-gradient(transparent 55%, black 56%);"></div>
+                    
+                    <div class="text-center z-10">
+                        <div class="text-2xl font-serif font-bold text-gray-900">${displayHours}</div>
+                        <div class="text-xs text-gray-400">Daylight</div>
+                    </div>
+                </div>
                 
-                document.getElementById('aboutText').innerHTML = result.about;
-                document.getElementById('aboutResult').style.display = 'block';
-                showStatus('Plant info fetched!', 'success');
-                await loadPlantData();
-            } catch (err) {
-                showStatus('Error: ' + err.message, 'error');
-            } finally {
-                btn.disabled = false;
-                btn.textContent = '🔍 Search About Plant';
-            }
+                <div class="w-full grid grid-cols-2 gap-4 text-xs">
+                    <div class="flex flex-col items-center">
+                        <span class="text-orange-400 text-lg mb-1"><i data-lucide="sunrise" class="w-5 h-5"></i></span>
+                        <span class="text-gray-500">Sunrise</span>
+                        <span class="font-semibold text-gray-700">${sunrise}</span>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <span class="text-purple-400 text-lg mb-1"><i data-lucide="sunset" class="w-5 h-5"></i></span>
+                        <span class="text-gray-500">Sunset</span>
+                        <span class="font-semibold text-gray-700">${sunset}</span>
+                    </div>
+                </div>
+            `;
+            els.sunlightContent.innerHTML = sunlightHtml;
+            refreshIcons();
+        }
+
+        els.prevBtn.addEventListener('click', () => { currentDay--; saveCurrentState().then(updateDisplay); });
+        els.nextBtn.addEventListener('click', () => { currentDay++; saveCurrentState().then(updateDisplay); });
+        
+        els.profileBtn.addEventListener('click', () => {
+            saveCurrentState().then(() => {
+                currentDay = -1;
+                updateDisplay();
+            });
         });
-        
-        // Drop Zone - handles both click and drag-drop
-        const dropZone = document.getElementById('dropZone');
-        const fileInput = document.getElementById('plantImage');
-        
-        // Click to open file picker
-        dropZone.addEventListener('click', () => fileInput.click());
-        
-        // File selected via picker
-        fileInput.addEventListener('change', () => handleFile(fileInput.files[0]));
-        
-        // Drag and drop events
-        dropZone.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            dropZone.classList.add('drop-zone--over');
-        });
-        
-        dropZone.addEventListener('dragleave', (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            dropZone.classList.remove('drop-zone--over');
-        });
-        
-        dropZone.addEventListener('drop', (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            dropZone.classList.remove('drop-zone--over');
-            
-            const files = e.dataTransfer.files;
-            if (files && files.length > 0) {
-                handleFile(files[0]);
-            }
-        });
-        
-        // Handle file upload - show preview AND auto-save
-        async function handleFile(file) {
-            if (!file || !file.type.startsWith('image/')) {
-                showStatus('Please select an image file', 'error');
+
+        els.compareSlider.addEventListener('input', (e) => updateSliderOpacity(e.target.value));
+
+        function updateSliderOpacity(val) {
+            els.realImg.style.opacity = 1 - (val / 100);
+        }
+
+        function autoDetectLocation(inputElement) {
+            if (!navigator.geolocation) {
+                showStatus('Geolocation is not supported by your browser', 'error');
                 return;
             }
-            
-            currentFile = file;
-            
-            // Show loading
-            const dropText = document.querySelector('.drop-zone__text');
-            dropText.textContent = '⏳ Uploading...';
-            
-            // Read file as base64
-            const imageData = await new Promise(resolve => {
-                const reader = new FileReader();
-                reader.onload = (e) => resolve(e.target.result);
-                reader.readAsDataURL(file);
-            });
-            
-            // Update preview in comparison view
-            const realImg = document.getElementById('realImg');
-            realImg.src = imageData;
-            realImg.style.display = 'block';
-            realImg.style.opacity = 1;
-            document.getElementById('noImageMsg').style.display = 'none';
-            
-            // Update drop zone text
-            dropText.textContent = '✅ ' + file.name;
-            dropText.style.display = 'block';
-            
-            // Auto-save the image immediately
-            try {
-                const res = await fetch('/api/plant', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        name: plantData.name,
-                        city: plantData.city,
-                        indoorLocation: plantData.indoorLocation,
-                        dayOfPlanting: `Day ${currentDay}`,
-                        feedback: document.getElementById('feedback').value,
-                        image: imageData
-                    })
-                });
-                const result = await res.json();
-                if (result.success) {
-                    showStatus('Image uploaded & saved!', 'success');
-                    await loadPlantData();
-                } else {
-                    throw new Error('Failed to save');
-                }
-            } catch (err) {
-                showStatus('Error saving image: ' + err.message, 'error');
-                dropText.textContent = '📷 Upload Real Image';
-            }
-        }
-        
-        // Save Day
-        document.getElementById('saveDayBtn').addEventListener('click', async () => {
-            const btn = document.getElementById('saveDayBtn');
+
+            const btn = inputElement.parentElement.querySelector('button');
             btn.disabled = true;
-            btn.textContent = 'Saving...';
-            
-            try {
-                let imageData = null;
-                if (currentFile) {
-                    imageData = await new Promise(r => {
-                        const reader = new FileReader();
-                        reader.onload = e => r(e.target.result);
-                        reader.readAsDataURL(currentFile);
-                    });
+            btn.style.opacity = '0.5';
+            showStatus('Requesting location access...', 'info');
+
+            navigator.geolocation.getCurrentPosition(async (position) => {
+                const { latitude, longitude } = position.coords;
+                try {
+                    showStatus('Fetching city details...', 'info');
+                    const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`);
+                    const data = await res.json();
+                    
+                    if (data && data.address) {
+                        const city = data.address.city || data.address.town || data.address.village || data.address.hamlet || data.address.county;
+                        if (city) {
+                            inputElement.value = city;
+                            showStatus(`Location detected: ${city}`, 'success');
+                        } else {
+                            throw new Error('City name not found for this location');
+                        }
+                    } else {
+                        throw new Error('Invalid response from geocoding service');
+                    }
+                } catch (e) {
+                    console.error(e);
+                    showStatus('Could not determine city name.', 'error');
+                } finally {
+                    btn.disabled = false;
+                    btn.style.opacity = '1';
                 }
-                
+            }, (error) => {
+                console.error("Geo Error:", error);
+                let msg = 'Location error.';
+                switch(error.code) {
+                    case error.PERMISSION_DENIED: msg = 'User denied location request.'; break;
+                    case error.POSITION_UNAVAILABLE: msg = 'Location info unavailable.'; break;
+                    case error.TIMEOUT: msg = 'Location request timed out.'; break;
+                }
+                showStatus(msg, 'error');
+                btn.disabled = false;
+                btn.style.opacity = '1';
+            });
+        }
+
+        els.setupLocBtn.addEventListener('click', () => autoDetectLocation(els.setupCity));
+        els.dashboardLocBtn.addEventListener('click', () => autoDetectLocation(els.city));
+
+        els.startBtn.addEventListener('click', async () => {
+            els.startBtn.textContent = 'Creating Profile...';
+            els.startBtn.disabled = true;
+            try {
+                const body = {
+                    name: els.setupName.value,
+                    city: els.setupCity.value,
+                    indoorLocation: els.setupLocation.value,
+                    dayOfPlanting: 'Day 0',
+                    feedback: '',
+                    image: null
+                };
                 const res = await fetch('/api/plant', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        name: plantData.name,
-                        city: plantData.city,
-                        indoorLocation: plantData.indoorLocation,
-                        dayOfPlanting: `Day ${currentDay}`,
-                        feedback: document.getElementById('feedback').value,
-                        image: imageData
-                    })
+                    body: JSON.stringify(body)
                 });
-                const result = await res.json();
-                if (result.success) {
-                    showStatus('Day saved!', 'success');
-                    await loadPlantData();
-                }
-            } catch (err) {
-                showStatus('Error: ' + err.message, 'error');
+                await loadPlantData();
+                showStatus('🌱 Plant profile created!', 'success');
+            } catch (e) {
+                showStatus('Error creating plant: ' + e.message, 'error');
             } finally {
-                btn.disabled = false;
-                btn.textContent = '💾 Save Day Info';
+                els.startBtn.textContent = 'Start Tracking';
+                els.startBtn.disabled = false;
+                refreshIcons();
             }
         });
-        
-        // Analysis Buttons
-        async function callAPI(endpoint, btnId, resultId, displayFn) {
-            const btn = document.getElementById(btnId);
-            btn.disabled = true;
-            const originalText = btn.textContent;
-            btn.textContent = 'Loading...';
-            
-            try {
-                // Make sure current day is saved first
-                await saveDayIfNeeded();
-                
-                const res = await fetch(`/api/plant/${endpoint}`, { method: 'POST' });
-                const result = await res.json();
-                if (result.error) throw new Error(result.error);
-                
-                displayFn(result);
-                document.getElementById(resultId).style.display = 'block';
-                showStatus('Saved!', 'success');
-                await loadPlantData();
-            } catch (err) {
-                showStatus('Error: ' + err.message, 'error');
-            } finally {
-                btn.disabled = false;
-                btn.textContent = originalText;
+
+        document.getElementById('saveInfoBtn').addEventListener('click', async () => {
+            await saveCurrentState();
+            showStatus('Plant info saved!', 'success');
+        });
+
+        async function saveCurrentState() {
+            let imageData = null;
+            if (currentFile) {
+                imageData = await new Promise(r => {
+                    const reader = new FileReader();
+                    reader.onload = e => r(e.target.result);
+                    reader.readAsDataURL(currentFile);
+                });
             }
-        }
-        
-        async function saveDayIfNeeded() {
-            // Quick save to ensure day is set
+            const body = {
+                name: els.plantName.value,
+                city: els.city.value,
+                indoorLocation: els.indoorLocation.value,
+                dayOfPlanting: `Day ${currentDay}`,
+                feedback: els.feedback.value,
+                image: imageData
+            };
             await fetch('/api/plant', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    name: plantData.name,
-                    city: plantData.city,
-                    indoorLocation: plantData.indoorLocation,
-                    dayOfPlanting: `Day ${currentDay}`,
-                    feedback: document.getElementById('feedback').value,
-                    image: null
-                })
+                body: JSON.stringify(body)
             });
         }
-        
-        document.getElementById('weatherBtn').addEventListener('click', () => {
-            callAPI('weather', 'weatherBtn', 'weatherResult', r => {
-                document.getElementById('weatherText').textContent = r.weather;
-            });
+
+        els.fileInput.addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            currentFile = file;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                els.realImg.src = e.target.result;
+                els.realImg.style.display = 'block';
+                els.realImg.style.opacity = 1;
+                els.noImageMsg.style.display = 'none';
+            };
+            reader.readAsDataURL(file);
+            showStatus('Uploading...', 'info');
+            await saveCurrentState();
+            showStatus('Image uploaded!', 'success');
+            els.predictPrompt.style.display = 'flex';
+            refreshIcons();
         });
-        
-        document.getElementById('colorBtn').addEventListener('click', () => {
-            callAPI('color', 'colorBtn', 'colorResult', r => {
-                document.getElementById('colorDisplay').innerHTML = `<div class="color-display"><div class="color-square" style="background:${r.color}"></div><span class="color-hex">${r.color}</span></div>`;
-            });
-        });
-        
-        document.getElementById('leafBtn').addEventListener('click', () => {
-            callAPI('leafcount', 'leafBtn', 'leafResult', r => {
-                document.getElementById('leafDisplay').innerHTML = `<span class="leaf-count">${r.leafCount}</span> leaves`;
-            });
-        });
-        
-        document.getElementById('infectionBtn').addEventListener('click', () => {
-            callAPI('infections', 'infectionBtn', 'infectionResult', r => {
-                const isHealthy = r.infections.toLowerCase().includes('healthy');
-                document.getElementById('infectionText').innerHTML = `<span style="color:${isHealthy ? '#2e7d32' : '#c62828'}">${r.infections}</span>`;
-            });
-        });
-        
-        document.getElementById('growthBtn').addEventListener('click', () => {
-            callAPI('growth', 'growthBtn', 'growthResult', r => {
-                document.getElementById('growthDisplay').innerHTML = `<span class="growth-stage">${r.stage}</span>`;
-            });
-        });
-        
-        // Identify Plant Button (Plant.id API)
-        document.getElementById('identifyBtn').addEventListener('click', async () => {
-            const btn = document.getElementById('identifyBtn');
-            btn.disabled = true;
-            btn.textContent = 'Identifying...';
-            
+
+        document.getElementById('analyzeAllBtn').addEventListener('click', async () => {
+             const btn = document.getElementById('analyzeAllBtn');
+             const originalText = btn.innerHTML;
+             btn.innerHTML = '<span><i data-lucide="bot" class="w-5 h-5 inline"></i> Analyzing...</span>';
+             btn.disabled = true;
+             refreshIcons();
+
             try {
-                await saveDayIfNeeded();
-                const res = await fetch('/api/plant/identify', { method: 'POST' });
-                const result = await res.json();
-                if (result.error) throw new Error(result.error);
-                
-                // Show results in modal/alert
-                if (result.suggestions && result.suggestions.length > 0) {
-                    let html = '<div style="background:#e0f2f1;padding:20px;border-radius:12px;margin-top:15px;">';
-                    html += '<h3 style="color:#00695c;margin:0 0 15px;">🔎 Plant Identification Results</h3>';
-                    result.suggestions.forEach(s => {
-                        html += `<div style="background:white;padding:12px;border-radius:8px;margin-bottom:10px;border-left:4px solid #00897b;">`;
-                        html += `<strong style="font-size:18px;">#${s.rank} ${s.name}</strong>`;
-                        html += `<span style="float:right;background:#00897b;color:white;padding:4px 10px;border-radius:15px;font-weight:bold;">${s.probability}%</span>`;
-                        if (s.similar_images && s.similar_images.length > 0) {
-                            html += `<div style="margin-top:8px;display:flex;gap:8px;">`;
-                            s.similar_images.forEach(img => {
-                                if (img.url) {
-                                    html += `<img src="${img.url}" style="width:60px;height:60px;object-fit:cover;border-radius:6px;">`;
-                                }
-                            });
-                            html += `</div>`;
-                        }
-                        html += `</div>`;
-                    });
-                    html += '</div>';
-                    
-                    // Insert after button grid
-                    const existing = document.getElementById('identifyResult');
-                    if (existing) existing.remove();
-                    const div = document.createElement('div');
-                    div.id = 'identifyResult';
-                    div.innerHTML = html;
-                    document.querySelector('.button-grid').insertAdjacentElement('afterend', div);
-                    
-                    showStatus('Plant identified!', 'success');
-                } else {
-                    showStatus('Could not identify plant', 'error');
-                }
+                await saveCurrentState();
+                const endpoints = [
+                    '/api/plant/weather',
+                    '/api/plant/leafcount',
+                    '/api/plant/color', 
+                    '/api/plant/growth',
+                    '/api/plant/infections'
+                ];
+                const promises = endpoints.map(ep => fetch(ep, { method: 'POST' }).then(r => r.json()));
+                const results = await Promise.allSettled(promises);
+                let successCount = 0;
+                results.forEach((res, idx) => {
+                    if (res.status === 'fulfilled' && !res.value.error) successCount++;
+                });
+                await loadPlantData(); 
+                showStatus(`Analysis complete (${successCount}/${endpoints.length} checks)`, 'success');
             } catch (err) {
-                showStatus('Error: ' + err.message, 'error');
+                console.error(err);
+                showStatus('Analysis failed: ' + err.message, 'error');
             } finally {
+                btn.innerHTML = originalText;
                 btn.disabled = false;
-                btn.textContent = '🔎 Identify Plant';
+                refreshIcons();
             }
         });
-        
-        // Predict Button
+
+        const analysisDropdown = document.getElementById('analysisType');
+        const specificBtn = document.getElementById('analyzeSpecificBtn');
+        analysisDropdown.addEventListener('change', (e) => {
+            specificBtn.disabled = !e.target.value;
+        });
+        specificBtn.addEventListener('click', async () => {
+             const type = analysisDropdown.value;
+             if (!type) return;
+             specificBtn.disabled = true;
+             specificBtn.textContent = '...';
+             try {
+                 await saveCurrentState();
+                 const res = await fetch(`/api/plant/${type}`, { method: 'POST' });
+                 const data = await res.json();
+                 if (data.error) throw new Error(data.error);
+                 await loadPlantData();
+                 showStatus('Analysis updated!', 'success');
+             } catch (err) {
+                 showStatus('Error: ' + err.message, 'error');
+             } finally {
+                 specificBtn.disabled = false;
+                 specificBtn.textContent = 'Run';
+             }
+        });
+
         document.getElementById('predictBtn').addEventListener('click', async () => {
             const btn = document.getElementById('predictBtn');
-            btn.disabled = true;
             btn.textContent = 'Generating...';
-            
+            btn.disabled = true;
             try {
-                await saveDayIfNeeded();
-                const res = await fetch('/api/plant/predict', { method: 'POST' });
-                const result = await res.json();
-                if (result.error) throw new Error(result.error);
-                
-                // Reload data and show comparison
-                await loadPlantData();
-                
-                // Manually update the comparison view with new prediction
-                const predictedImg = document.getElementById('predictedImg');
-                const realImg = document.getElementById('realImg');
-                const sliderContainer = document.getElementById('sliderContainer');
-                const noImageMsg = document.getElementById('noImageMsg');
-                
-                // Add timestamp to bust cache
-                predictedImg.src = result.predictedImage + '?t=' + Date.now();
-                predictedImg.style.display = 'block';
-                realImg.style.display = 'block';
-                noImageMsg.style.display = 'none';
-                sliderContainer.style.display = 'block';
-                document.getElementById('compareSlider').value = 0;
-                updateSlider(0);
-                
-                showStatus('Prediction generated!', 'success');
-            } catch (err) {
-                showStatus('Error: ' + err.message, 'error');
+                 await fetch('/api/plant/predict', { method: 'POST' });
+                 await loadPlantData();
+                 showStatus('Prediction generated!', 'success');
+            } catch (e) {
+                showStatus('Error predicting', 'error');
             } finally {
+                btn.textContent = 'Generate';
                 btn.disabled = false;
-                btn.textContent = '🔮 Generate Prediction';
             }
         });
-        
-        // Clear
+
+        document.getElementById('identifyBtn').addEventListener('click', async () => {
+             const btn = document.getElementById('identifyBtn');
+             const originalText = btn.innerHTML;
+             const resultsContainer = document.getElementById('identifyResults');
+             btn.innerHTML = '<span><i data-lucide="search" class="w-5 h-5 inline"></i> Identifying...</span>';
+             btn.disabled = true;
+             resultsContainer.innerHTML = '';
+             resultsContainer.classList.add('hidden');
+             refreshIcons();
+
+             try {
+                await saveCurrentState();
+                const res = await fetch('/api/plant/identify', { method: 'POST' });
+                const data = await res.json();
+                if (data.suggestions && data.suggestions.length > 0) {
+                    resultsContainer.classList.remove('hidden');
+                    let html = '<div class="text-sm font-bold text-gray-700 mb-2">Top Suggestions:</div>';
+                    data.suggestions.forEach(s => {
+                        let imgsHtml = '';
+                        if (s.similar_images && s.similar_images.length) {
+                             s.similar_images.forEach(img => {
+                                 if (img.url) {
+                                     imgsHtml += `<img src="${img.url}" class="w-16 h-16 object-cover rounded-md border border-gray-200" title="Reference Image">`;
+                                 }
+                             });
+                        }
+                        html += `
+                        <div class="bg-gray-50 p-3 rounded-lg border border-gray-100 hover:border-teal-200 transition">
+                            <div class="flex justify-between items-center mb-2">
+                                <div class="font-medium text-gray-800 text-sm">#${s.rank} ${s.name}</div>
+                                <span class="bg-teal-100 text-teal-800 text-xs px-2 py-1 rounded-full font-bold">${s.probability}%</span>
+                            </div>
+                            <div class="flex gap-2">${imgsHtml}</div>
+                        </div>`;
+                    });
+                    resultsContainer.innerHTML = html;
+                    const best = data.suggestions[0];
+                    if (!els.plantName.value && best.probability > 20) {
+                         els.plantName.value = best.name;
+                         await saveCurrentState();
+                         showStatus(`Auto-named: ${best.name}`, 'success');
+                         await fetch('/api/plant/enhance', { method: 'POST' });
+                         await loadPlantData();
+                    }
+                } else {
+                    showStatus('No identification results found.', 'info');
+                }
+             } catch(e) { 
+                 console.error(e);
+                 showStatus('Identification failed.', 'error');
+             } finally {
+                 btn.innerHTML = originalText;
+                 btn.disabled = false;
+                 refreshIcons();
+             }
+        });
+
         document.getElementById('clearBtn').addEventListener('click', async () => {
-            if (!confirm('Delete all plant data?')) return;
-            await fetch('/api/plant/clear', { method: 'POST' });
-            showStatus('Data cleared!', 'success');
-            plantData = null;
-            currentDay = -1;
-            document.getElementById('setupForm').reset();
-            document.getElementById('aboutResult').style.display = 'none';
-            document.getElementById('searchAboutBtn').style.display = 'none';
-            updateDisplay();
+            if(confirm('Clear all data?')) {
+                await fetch('/api/plant/clear', { method: 'POST' });
+                location.reload();
+            }
         });
-        
-        // Slider for image comparison
-        function updateSlider(value) {
-            const realImg = document.getElementById('realImg');
-            const percentDisplay = document.getElementById('percentDisplay');
-            // 0 = 100% real, 100 = 100% predicted
-            realImg.style.opacity = 1 - (value / 100);
-            percentDisplay.textContent = `${100 - value}% Real → ${value}% Predicted`;
-        }
-        
-        document.getElementById('compareSlider').addEventListener('input', (e) => {
-            updateSlider(parseInt(e.target.value));
+
+        // Get Actionable Insights
+        document.getElementById('insightsBtn').addEventListener('click', async () => {
+            const btn = document.getElementById('insightsBtn');
+            const originalText = btn.innerHTML;
+            const resultsContainer = document.getElementById('insightsResults');
+            const contentContainer = document.getElementById('insightsContent');
+            
+            btn.innerHTML = '<span><i data-lucide="loader-2" class="w-5 h-5 inline animate-spin"></i> Getting Insights...</span>';
+            btn.disabled = true;
+            resultsContainer.classList.add('hidden');
+            refreshIcons();
+
+            try {
+                await saveCurrentState();
+                const res = await fetch('/api/plant/insights', { method: 'POST' });
+                const data = await res.json();
+                
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+                
+                if (data.insights) {
+                    resultsContainer.classList.remove('hidden');
+                    contentContainer.innerHTML = marked.parse(data.insights);
+                    showStatus('💡 Insights generated!', 'success');
+                } else {
+                    showStatus('No insights available.', 'info');
+                }
+            } catch (e) {
+                console.error(e);
+                showStatus('Failed to get insights: ' + e.message, 'error');
+            } finally {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+                refreshIcons();
+            }
         });
-        
+
         function showStatus(msg, type) {
             const el = document.getElementById('status');
             el.textContent = msg;
-            el.className = type;
             el.style.display = 'block';
+            el.className = `mb-6 p-4 rounded-lg text-sm font-medium text-center transition-all duration-300 ${type === 'error' ? 'bg-red-50 text-red-600' : type === 'info' ? 'bg-blue-50 text-blue-600' : 'bg-green-50 text-green-600'}`;
             setTimeout(() => el.style.display = 'none', 3000);
         }
+
     </script>
 </body>
 </html>

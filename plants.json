@@ -3,77 +3,287 @@
   "city": "San Francisco",
   "indoorLocation": "Living Room Window",
   "about": "Chili peppers, belonging to the genus *Capsicum*, are warm-season plants that thrive in specific environmental conditions. For optimal growth, they require a temperature range of 15-30°C (59-86°F), with humidity levels between 40-70%. Chili pepper plants need full sun and well-draining soil rich in organic matter. Direct sunlight can raise temperatures above 30°C (86°F), potentially stressing and damaging young plants. The ideal nighttime temperature is 18-21°C (65-70°F) and the daytime temperature is 21-26°C (70-80°F).\n\nNumerical information regarding their care includes watering about 1 inch per week. It is best to keep your soil a little on the dry side to help produce hotter peppers. For germination, a soil temperature of 23-29°C (75-85°F) is ideal. The plants need good drainage and hate to be stood in water.\n",
-  "currentDay": 36,
+  "currentDay": 45,
   "days": {
-    "day1": {},
-    "day2": {},
-    "day3": {},
-    "day4": {},
-    "day5": {},
-    "day6": {},
-    "day7": {},
-    "day8": {},
-    "day9": {},
-    "day10": {},
-    "day11": {},
-    "day12": {},
-    "day13": {},
+    "day1": {
+      "image": "uploads/chili_pepper_day1.png",
+      "feedback": "",
+      "weather": "High 23°C, Low 13°C, Humidity 77%, Sunrise 6:24 AM, Sunset 5:23 PM, Daylight 10 hours 59 minutes"
+    },
+    "day2": {
+      "image": "uploads/chili_pepper_day2.png",
+      "feedback": "",
+      "weather": "High 18°C, Low 14°C, Humidity 77%, Sunrise 6:25 AM, Sunset 5:22 PM, Daylight 10 hours 57 minutes"
+    },
+    "day3": {
+      "image": "uploads/chili_pepper_day3.png",
+      "feedback": "",
+      "weather": "High 17°C, Low 13°C, Humidity 82%, Sunrise 6:26 AM, Sunset 5:21 PM, Daylight 10 hours 54 minutes"
+    },
+    "day4": {
+      "image": "uploads/chili_pepper_day4.png",
+      "feedback": "",
+      "weather": "High 18°C, Low 14°C, Humidity 84%, Sunrise 6:27 AM, Sunset 5:20 PM, Daylight 10 hours 52 minutes"
+    },
+    "day5": {
+      "image": "uploads/chili_pepper_day5.png",
+      "feedback": "",
+      "weather": "High 18°C, Low 15°C, Humidity 87%, Sunrise 6:28 AM, Sunset 5:18 PM, Daylight 10 hours 50 minutes"
+    },
+    "day6": {
+      "image": "uploads/chili_pepper_day6.png",
+      "feedback": "",
+      "weather": "High 18°C, Low 13°C, Humidity 84%, Sunrise 6:29 AM, Sunset 5:17 PM, Daylight 10 hours 47 minutes"
+    },
+    "day7": {
+      "image": "uploads/chili_pepper_day7.png",
+      "feedback": "",
+      "weather": "High 19°C, Low 12°C, Humidity 77%, Sunrise 6:30 AM, Sunset 5:16 PM, Daylight 10 hours 45 minutes"
+    },
+    "day8": {
+      "image": "uploads/chili_pepper_day8.png",
+      "feedback": "",
+      "weather": "High 23°C, Low 11°C, Humidity 71%, Sunrise 6:31 AM, Sunset 5:15 PM, Daylight 10 hours 43 minutes"
+    },
+    "day9": {
+      "image": "uploads/chili_pepper_day9.png",
+      "feedback": "",
+      "weather": "High 24°C, Low 14°C, Humidity 70%, Sunrise 6:32 AM, Sunset 5:13 PM, Daylight 10 hours 41 minutes"
+    },
+    "day10": {
+      "image": "uploads/chili_pepper_day10.png",
+      "feedback": "",
+      "weather": "High 17°C, Low 13°C, Humidity 87%, Sunrise 6:33 AM, Sunset 5:12 PM, Daylight 10 hours 39 minutes"
+    },
+    "day11": {
+      "image": "uploads/chili_pepper_day11.png",
+      "feedback": "",
+      "weather": "High 18°C, Low 12°C, Humidity 83%, Sunrise 6:34 AM, Sunset 5:11 PM, Daylight 10 hours 37 minutes",
+      "predictedImage": "uploads/chili_pepper_day12_predicted.png"
+    },
+    "day12": {
+      "image": "uploads/chili_pepper_day12.png",
+      "feedback": "",
+      "weather": "High 20°C, Low 11°C, Humidity 84%, Sunrise 6:35 AM, Sunset 5:10 PM, Daylight 10 hours 34 minutes",
+      "predictedFromPrevious": "uploads/chili_pepper_day12_predicted.png"
+    },
+    "day13": {
+      "image": "uploads/chili_pepper_day13.png",
+      "feedback": "",
+      "weather": "High 19°C, Low 12°C, Humidity 90%, Sunrise 6:36 AM, Sunset 5:09 PM, Daylight 10 hours 32 minutes"
+    },
     "day14": {
       "image": "uploads/chili_pepper_day14.png",
       "feedback": "",
-      "weather": "Today: High 57°F, Low 46°F, Humidity 88%, Sunrise 7:09 AM, Sunset 4:50 PM, Daylight 9 hours and 41 minutes",
-      "plantColor": "#575249",
+      "weather": "High 16°C, Low 12°C, Humidity 85%, Sunrise 6:37 AM, Sunset 5:08 PM, Daylight 10 hours 30 minutes",
+      "plantColor": "#5A6132",
       "leafCount": "4",
       "infections": "The purplish hue on the older leaves and stem could indicate a nutrient deficiency, possibly phosphorus, or stress from cold temperatures. The tip of the newest leaf also shows minor browning, which may be from environmental stress.",
       "growthStage": "Seedling",
       "predictedImage": "uploads/chili_pepper_day15_predicted.png"
     },
     "day15": {
-      "weather": "Tomorrow: High 59°F, Low 45°F, Humidity 81%, Sunrise and Sunset times are not available, Daylight hours are not available",
-      "predictedFromPrevious": "uploads/chili_pepper_day15_predicted.png"
+      "image": "uploads/chili_pepper_day15.png",
+      "weather": "High 20°C, Low 12°C, Humidity 79%, Sunrise 6:38 AM, Sunset 5:07 PM, Daylight 10 hours 28 minutes",
+      "predictedFromPrevious": "uploads/chili_pepper_day15_predicted.png",
+      "feedback": ""
     },
-    "day16": {},
-    "day17": {},
-    "day18": {},
-    "day19": {},
-    "day20": {},
-    "day21": {},
-    "day22": {},
-    "day23": {},
-    "day24": {},
-    "day25": {},
-    "day26": {},
-    "day27": {},
-    "day28": {},
-    "day29": {},
-    "day30": {},
-    "day31": {},
-    "day32": {},
-    "day33": {},
+    "day16": {
+      "image": "uploads/chili_pepper_day16.png",
+      "feedback": "",
+      "weather": "High 18°C, Low 15°C, Humidity 84%, Sunrise 6:39 AM, Sunset 5:06 PM, Daylight 10 hours 26 minutes"
+    },
+    "day17": {
+      "image": "uploads/chili_pepper_day17.png",
+      "feedback": "",
+      "weather": "High 18°C, Low 13°C, Humidity 92%, Sunrise 6:40 AM, Sunset 5:05 PM, Daylight 10 hours 24 minutes"
+    },
+    "day18": {
+      "image": "uploads/chili_pepper_day18.png",
+      "feedback": "",
+      "weather": "High 17°C, Low 13°C, Humidity 96%, Sunrise 6:42 AM, Sunset 5:04 PM, Daylight 10 hours 22 minutes"
+    },
+    "day19": {
+      "image": "uploads/chili_pepper_day19.png",
+      "feedback": "",
+      "weather": "High 21°C, Low 12°C, Humidity 84%, Sunrise 6:43 AM, Sunset 5:03 PM, Daylight 10 hours 20 minutes"
+    },
+    "day20": {
+      "image": "uploads/chili_pepper_day20.png",
+      "feedback": "",
+      "weather": "High 13°C, Low -11°C, Humidity 78%, Sunrise 6:44 AM, Sunset 5:02 PM, Daylight 10 hours 18 minutes",
+      "leafCount": "12",
+      "plantColor": "#4A5D23",
+      "growthStage": "Early Vegetative",
+      "infections": "Healthy - No infections detected. The plant shows normal coloration and leaf structure for this growth stage."
+    },
+    "day21": {
+      "image": "uploads/chili_pepper_day21.png",
+      "feedback": "",
+      "weather": "High 14°C, Low -11°C, Humidity 79%, Sunrise 6:45 AM, Sunset 5:02 PM, Daylight 10 hours 16 minutes",
+      "leafCount": "14",
+      "plantColor": "#4B5E24",
+      "growthStage": "Early Vegetative",
+      "infections": "Healthy - No infections detected. Leaves are developing well with good green coloration."
+    },
+    "day22": {
+      "image": "uploads/chili_pepper_day22.png",
+      "feedback": "",
+      "weather": "High 8°C, Low -11°C, Humidity 92%, Sunrise 6:46 AM, Sunset 5:01 PM, Daylight 10 hours 14 minutes",
+      "leafCount": "17",
+      "growthStage": "Early Vegetative",
+      "plantColor": "#444439",
+      "infections": "Healthy - No infections detected. Plant is progressing normally through the early vegetative stage."
+    },
+    "day23": {
+      "image": "uploads/chili_pepper_day23.png",
+      "feedback": "",
+      "weather": "High 9°C, Low -10°C, Humidity 83%, Sunrise 6:47 AM, Sunset 5:00 PM, Daylight 10 hours 12 minutes",
+      "leafCount": "19",
+      "plantColor": "#4D6126",
+      "growthStage": "Early Vegetative",
+      "infections": "Healthy - No infections detected. Steady growth observed with good leaf development."
+    },
+    "day24": {
+      "image": "uploads/chili_pepper_day24.png",
+      "feedback": "",
+      "weather": "High 8°C, Low -10°C, Humidity 89%, Sunrise 6:48 AM, Sunset 4:59 PM, Daylight 10 hours 11 minutes",
+      "leafCount": "21",
+      "plantColor": "#4E6227",
+      "growthStage": "Early Vegetative",
+      "infections": "Healthy - No infections detected. Plant is thriving with consistent growth pattern."
+    },
+    "day25": {
+      "image": "uploads/chili_pepper_day25.png",
+      "feedback": "",
+      "weather": "High 8°C, Low -11°C, Humidity 87%, Sunrise 6:49 AM, Sunset 4:58 PM, Daylight 10 hours 9 minutes",
+      "leafCount": "23",
+      "plantColor": "#4F6328",
+      "growthStage": "Early Vegetative",
+      "infections": "Healthy - No infections detected. The plant shows excellent health and development."
+    },
+    "day26": {
+      "image": "uploads/chili_pepper_day26.png",
+      "feedback": "",
+      "predictedImage": "uploads/chili_pepper_day27_predicted.png",
+      "growthStage": "Early Vegetative",
+      "weather": "High 16°C, Low 13°C, Humidity 88%, Sunrise 6:50 AM, Sunset 4:58 PM, Daylight 10 hours 7 minutes"
+    },
+    "day27": {
+      "image": "uploads/chili_pepper_day27.png",
+      "feedback": "",
+      "predictedFromPrevious": "uploads/chili_pepper_day27_predicted.png",
+      "weather": "High 16°C, Low 14°C, Humidity 86%, Sunrise 6:51 AM, Sunset 4:57 PM, Daylight 10 hours 5 minutes"
+    },
+    "day28": {
+      "image": "uploads/chili_pepper_day28.png",
+      "feedback": "",
+      "weather": "High 14°C, Low 11°C, Humidity 82%, Sunrise 6:52 AM, Sunset 4:56 PM, Daylight 10 hours 3 minutes"
+    },
+    "day29": {
+      "image": "uploads/chili_pepper_day29.png",
+      "feedback": "",
+      "weather": "High 15°C, Low 10°C, Humidity 84%, Sunrise 6:53 AM, Sunset 4:56 PM, Daylight 10 hours 2 minutes"
+    },
+    "day30": {
+      "image": "uploads/chili_pepper_day30.png",
+      "feedback": "",
+      "weather": "High 14°C, Low 11°C, Humidity 86%, Sunrise 6:54 AM, Sunset 4:55 PM, Daylight 10 hours 0 minutes"
+    },
+    "day31": {
+      "image": "uploads/chili_pepper_day31.png",
+      "feedback": "",
+      "weather": "High 15°C, Low 11°C, Humidity 84%, Sunrise 6:55 AM, Sunset 4:54 PM, Daylight 9 hours 58 minutes"
+    },
+    "day32": {
+      "image": "uploads/chili_pepper_day32.png",
+      "feedback": "",
+      "weather": "High 15°C, Low 10°C, Humidity 82%, Sunrise 6:56 AM, Sunset 4:54 PM, Daylight 9 hours 57 minutes"
+    },
+    "day33": {
+      "image": "uploads/chili_pepper_day33.png",
+      "feedback": "",
+      "weather": "High 15°C, Low 8°C, Humidity 91%, Sunrise 6:57 AM, Sunset 4:53 PM, Daylight 9 hours 55 minutes"
+    },
     "day34": {
       "image": "uploads/chili_pepper_day34.png",
       "feedback": "",
       "leafCount": "27",
-      "predictedImage": "uploads/chili_pepper_day35_predicted.png"
+      "predictedImage": "uploads/chili_pepper_day35_predicted.png",
+      "weather": "High 14°C, Low 10°C, Humidity 89%, Sunrise 6:58 AM, Sunset 4:53 PM, Daylight 9 hours 54 minutes"
     },
     "day35": {
-      "predictedFromPrevious": "uploads/chili_pepper_day35_predicted.png"
+      "image": "uploads/chili_pepper_day35.png",
+      "predictedFromPrevious": "uploads/chili_pepper_day35_predicted.png",
+      "feedback": "",
+      "weather": "High 15°C, Low 10°C, Humidity 89%, Sunrise 6:59 AM, Sunset 4:52 PM, Daylight 9 hours 53 minutes"
     },
     "day36": {
       "image": "uploads/chili_pepper_day36.png",
       "feedback": "",
-      "predictedImage": "uploads/chili_pepper_day37_predicted.png"
+      "predictedImage": "uploads/chili_pepper_day37_predicted.png",
+      "weather": "High 14°C, Low 9°C, Humidity 90%, Sunrise 7:00 AM, Sunset 4:52 PM, Daylight 9 hours 51 minutes",
+      "plantColor": "#67695B"
     },
     "day37": {
-      "predictedFromPrevious": "uploads/chili_pepper_day37_predicted.png"
+      "image": "uploads/chili_pepper_day37.png",
+      "predictedFromPrevious": "uploads/chili_pepper_day37_predicted.png",
+      "weather": "High 13°C, Low 8°C, Humidity 85%, Sunrise 7:01 AM, Sunset 4:52 PM, Daylight 9 hours 50 minutes",
+      "feedback": "",
+      "leafCount": "39"
     },
-    "day38": {},
-    "day39": {},
-    "day40": {},
-    "day41": {},
-    "day42": {},
-    "day43": {},
-    "day44": {},
-    "day45": {}
+    "day38": {
+      "image": "uploads/chili_pepper_day38.png",
+      "weather": "High 13°C, Low 7°C, Humidity 89%, Sunrise 7:02 AM, Sunset 4:51 PM, Daylight 9 hours 48 minutes",
+      "feedback": ""
+    },
+    "day39": {
+      "image": "uploads/chili_pepper_day39.png",
+      "weather": "High 12°C, Low 7°C, Humidity 91%, Sunrise 7:03 AM, Sunset 4:51 PM, Daylight 9 hours 47 minutes",
+      "feedback": ""
+    },
+    "day40": {
+      "image": "uploads/chili_pepper_day40.png",
+      "weather": "High 12°C, Low 7°C, Humidity 88%, Sunrise 7:04 AM, Sunset 4:51 PM, Daylight 9 hours 46 minutes",
+      "feedback": ""
+    },
+    "day41": {
+      "image": "uploads/chili_pepper_day41.png",
+      "weather": "High 10°C, Low 7°C, Humidity 89%, Sunrise 7:05 AM, Sunset 4:51 PM, Daylight 9 hours 45 minutes",
+      "feedback": ""
+    },
+    "day42": {
+      "image": "uploads/chili_pepper_day42.png",
+      "weather": "High 11°C, Low 6°C, Humidity 86%, Sunrise 7:06 AM, Sunset 4:50 PM, Daylight 9 hours 44 minutes",
+      "feedback": ""
+    },
+    "day43": {
+      "image": "uploads/chili_pepper_day43.png",
+      "weather": "High 15°C, Low 7°C, Humidity 84%, Sunrise 7:07 AM, Sunset 4:50 PM, Daylight 9 hours 43 minutes",
+      "feedback": ""
+    },
+    "day44": {
+      "image": "uploads/chili_pepper_day44.png",
+      "weather": "High 17°C, Low 6°C, Humidity 75%, Sunrise 7:08 AM, Sunset 4:50 PM, Daylight 9 hours 41 minutes",
+      "feedback": ""
+    },
+    "day45": {
+      "image": "uploads/chili_pepper_day45.png",
+      "feedback": "",
+      "weather": "High 9°C, Low 9°C, Humidity 85%, Sunrise 7:12 AM, Sunset 4:52 PM, Daylight 9.7 hours",
+      "leafCount": "11",
+      "plantColor": "#BFCCB4",
+      "infections": "This plant is not a chili pepper; it is a succulent, likely a type of Echeveria. The plant is showing signs of etiolation, which is stretching caused by insufficient sunlight, as seen by the long, bare stem and spaced-out leaves.",
+      "growthStage": "Vegetative",
+      "predictedImage": "uploads/chili_pepper_day46_predicted.png"
+    },
+    "day46": {
+      "image": "uploads/chili_pepper_day46.png",
+      "weather": "High 13°C, Low 8°C, Humidity 81%, Sunrise 7:12 AM, Sunset 4:52 PM, Daylight 9.7 hours",
+      "feedback": ""
+    },
+    "day47": {
+      "feedback": ""
+    }
   }
 }
